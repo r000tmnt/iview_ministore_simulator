@@ -10,8 +10,8 @@
         
         <nav class="direction">
             <ul>
-                <li>LEFT</li>
-                <li>RIGHT</li>
+                <li><button><Icon class="left" type="md-arrow-dropleft" /></button></li>
+                <li><button><Icon class="right" type="md-arrow-dropright" /></button></li>
             </ul>
         </nav>
       </main>
@@ -114,5 +114,28 @@ ul{
 ul > li{
   list-style: none;
   margin: 0 1%;
+}
+
+button{
+    background: #232;
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    color: white;
+    opacity: .5;
+    cursor: pointer;
+}
+
+button:hover{
+    opacity: .7;
+    transition: opacity .5s;
+}
+
+.left::before{
+    margin-right: 4px;
+}
+
+.right::before{
+    margin-left: 2px;
 }
 </style>

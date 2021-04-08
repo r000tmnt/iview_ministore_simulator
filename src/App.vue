@@ -1,12 +1,13 @@
 <template>
   <div id="app">
     <Head></Head>
+    {{cart}}
     <img_slider></img_Slider>
     <div id="message">
-      <h1>打適度的休息，<br>
-        是開精神的好夥伴</h1>
+      <h1>適度的休息，<br>
+        是開起精神的好夥伴</h1>
     </div>
-    <button class="goToshop" @click="openShop">購物去</button>
+    <button class="goToshop" @click="openShop"><Icon type="md-pizza" />購物去</button>
     <the-shop v-if="shop_open === true"></the-shop>
   </div>
 </template>
@@ -19,16 +20,23 @@ import theShop from './components/shop.vue'
 export default {
   name: 'App',
   components: {
-    Head, img_slider, theShop
+    Head,img_slider, theShop
   },
   data(){
     return{
-      shop_open: false
+      shop_open: false,
+      logIn_status: false,
+      cart: []
     }
   },
   methods: {
     openShop(){
       this.shop_open = true
+    }
+  },
+  created(){ //Check login or not
+    if(this.logIn_status === false){
+      this.form_active = true
     }
   }
 }
@@ -48,7 +56,8 @@ body{
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  background: linear-gradient(white 5%, #ffd28e 95%);
+  background-image: linear-gradient(#fff, hsla(36, 100%, 78%, 0.7)), url('./assets/blanket.jpg');
+  background-size: contain;
 }
 
 #message{
@@ -58,15 +67,14 @@ body{
 }
 
 .goToshop{
-  width: 100px;
-  height: 30px;
-  font-size: 1.2rem;
+  font-size: 2rem;
+  padding: .5%;
   border: none;
   border-radius: 10px;
   background-color: orange;
 }
 
 .goToshop:hover{
-  border-bottom: 2px solid rgb(92, 51, 3);
+  border-bottom: 3px solid rgb(92, 51, 3);
 }
 </style>

@@ -11,8 +11,8 @@
     <Col :xs="12">
       <nav>
         <ul>
-          <li>登入</li>
-          <li>購物車</li>
+          <!-- <li><Button type="text"><Icon type="md-open" />登入</Button></li> -->
+          <li><Button type="text"><Icon type="md-cart" />購物車</Button></li>
         </ul>
       </nav>
     </Col>
@@ -27,9 +27,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-/*div {  Both Row & Col are compiled as div, work as display flex? 
-  background-color: #42b983;
-} */
 .logo{
   float: left;
   width: 150px;
@@ -53,5 +50,10 @@ ul{
 ul > li{
   list-style: none;
   margin: 0 1%;
+}
+
+Button{
+  font-size: 1.2rem;
+  padding: 0;
 }
 </style>
