@@ -65,7 +65,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .slide-enter-active, .slide-leave-active {
-    transition: all 1.5s ease;
+    transition: all 1.5s ease-in-out;
 }
 .slide-enter{
     transform: translate(100%, 0);

@@ -1,14 +1,19 @@
 <template>
   <Row> 
-    <Col span="24" class="flex">
-      <Card class="card" v-for="product in products" :key="product.id">
-          <h1>{{product.name}}</h1>
-          <div class="product">
-            <img :src="product.path" alt="cake">
-          </div>
-          <p>price: NAN</p>
-          <button>加入購物車</button>
-      </Card>
+    <Col span="24" class="center">
+      <div class="modal">
+        <button class="close" @click="shopClose">X</button>
+        <main class="shelf flex">
+          <Card class="card" v-for="product in products" :key="product.id">
+            <h1>{{product.name}}</h1>
+            <div class="product">
+              <img :src="product.path" alt="cake">
+            </div>
+            <p>price: NAN</p>
+            <button>加入購物車</button>
+        </Card>
+        </main>      
+      </div>
     </Col>
   </Row>
 </template>
@@ -20,6 +25,11 @@ export default {
       return{
           products: []
       }
+  },
+  methods: {
+    shopClose(){
+      this.$parent.shop_open = false;
+    }
   },
   created(){
       let vm = this
@@ -34,9 +44,32 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.modal{
+  width: 100vw;
+  height: 100vh;
+  background-color: white;
+}
+
+.center{
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+}
+
 .flex{
     display: flex;
+    justify-content: center;
     flex-wrap: wrap;
+}
+
+.close{
+  width: 22px;
+  border-radius: 50%;
+  border: none;
+  background-color: gray;
+  float: right;
+  margin: 1% 2% 0 0;
 }
 
 .card{
@@ -48,7 +81,8 @@ h1{
 }
 
 .product{
-  height: 30vh;
+  width: 25vw;
+  height: 50vh;
 }
 
 .product > img{
