@@ -1,37 +1,63 @@
 <template>
   <div id="app">
-    <Head></Head>
-    {{cart}}
+    <head-bar></head-bar>
+    {{sorted_cart}}
     <img_slider></img_Slider>
     <div id="message">
       <h1>適度的休息，<br>
         是開起精神的好夥伴</h1>
     </div>
     <button class="goToshop" @click="openShop"><Icon type="md-pizza" />購物去</button>
-    <the-shop v-if="shop_open === true"></the-shop>
+    <the-shop v-if="shop_open === true" @getCart="getTheCart($event)"></the-shop>
   </div>
 </template>
 
 <script>
-import Head from './components/head_bar.vue'
+import headBar from './components/head_bar.vue'
 import img_slider from './components/img_slider.vue'
 import theShop from './components/shop.vue'
 
 export default {
   name: 'App',
   components: {
-    Head,img_slider, theShop
+    headBar,img_slider, theShop
   },
   data(){
     return{
       shop_open: false,
       logIn_status: false,
-      cart: []
+      sorted_cart: [],
+      same_name: false
     }
   },
   methods: {
     openShop(){
       this.shop_open = true
+    },
+
+    getTheCart(data){
+      console.log(data[0])
+
+      if(data !== undefined){
+        if(this.sorted_cart.length > 0){
+          let car_length = this.sorted_cart.length;
+          for(let i=0; i < car_length; i++){
+            if(data[0].name === this.sorted_cart[i].name){
+              this.same_name = true;
+              return this.sorted_cart[i].amount++
+            }else{
+              this.same_name = false
+            }
+          }
+
+          if(this.same_name === false){
+            this.sorted_cart[car_length] = data[0]
+          }
+        }else{
+          this.sorted_cart = data
+          console.log(this.sorted_cart[0])
+        }
+      }
     }
   },
   created(){ //Check login or not

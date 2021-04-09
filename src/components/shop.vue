@@ -1,26 +1,26 @@
 <template>
   <Row> 
-    <Col span="24" class="center">
-      <div class="modal">
+      <div class="modal center">
         <Button type="warning" class="close" @click="shopClose"></Button>
         <main class="shelf flex">
-          <Card class="card" v-for="(product, index) in products" :key="product.id">
-            <h1>{{product.name}}</h1>
-            <div class="product">
-              <img :src="product.path" alt="cake">
-            </div>
-            <p>${{product.price}}</p>
-            <ul>
-              <li><Button type="info"><Icon type="md-more" />詳細</Button></li>
-              <li><Button type="primary" @click="addToCart(index)"><Icon type="md-add-circle" />加入購物車</Button></li>
-            </ul>
-            <div class="cart-note" v-if="pushed_items[index].push === true">
-              <Icon type="md-cart" />
-            </div> 
-        </Card>
+          <Col span="7" v-for="(product, index) in products" :key="product.id">
+            <Card class="card">
+              <h1>{{product.name}}</h1>
+              <div class="product">
+                <img :src="product.path" alt="cake">
+              </div>
+              <p>${{product.price}}</p>
+              <ul>
+                <li><Button type="info"><Icon type="md-more" />詳細</Button></li>
+                <li><Button type="primary" @click="addToCart(index)"><Icon type="md-add-circle" />加入購物車</Button></li>
+              </ul>
+              <div class="cart-note" v-if="pushed_items[index].push === true">
+                <Icon type="md-cart" />
+              </div> 
+          </Card>
+        </Col>
         </main>      
       </div>
-    </Col>
   </Row>
 </template>
 
@@ -30,7 +30,8 @@ export default {
   data(){
       return{
           products: [],
-          pushed_items: []
+          pushed_items: [],
+          temp_cart: []
       }
   },
   methods: {
@@ -38,14 +39,23 @@ export default {
       this.$parent.shop_open = false;
     },
     addToCart(index){
-      this.$parent.cart.push({name: this.products[index].name, amount: 1, price: this.products[index].price})
-      this.pushed_items[index].push = true
+      if(this.temp_cart.length > 0){
+        console.log('temp_cart is full')
+      }else{
+        console.log('Push to temp_cart')
+        this.temp_cart.push({name: this.products[index].name, amount: 1, price: this.products[index].price})
+
+        if(Object.keys(this.temp_cart).length > 0){
+          this.$emit('getCart', this.temp_cart)
+          this.temp_cart = []
+          this.pushed_items[index].push = true
+        }
+      }
     }
   },
   created(){
       let vm = this
       vm.$https.get('http://localhost/iview_ministore_simulation/src/php/get_images.php').then(response => {
-        console.log(response)
           for(let i=0; i < response.data.length; i++){
               vm.products.push(response.data[i])
               vm.pushed_items.push({id: response.data[i].ID, push: false})
@@ -94,7 +104,7 @@ export default {
 }
 
 .card{
-    margin: 0.5%;
+    margin: 2%;
     /* background: linear-gradient(0deg, #582209, #ffbc0059); */
 }
 
@@ -137,5 +147,6 @@ ul > li{
 .cart-note{
   float: right;
   font-size: 1.2rem;
+  margin: -10px -10px 0 0;
 }
 </style>

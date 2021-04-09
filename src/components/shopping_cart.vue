@@ -1,5 +1,7 @@
 <template style="position: relative">
-    <div class="theForm center" v-if="theForm === 'login' ">
+<Row>
+  <Col span="24" style="justify-content: center">
+      <div class="theForm" v-if="theForm === 'login' ">
         <Form id="LoginForm" enctype="multipart/form-data">
         <FormItem>
           <Input class="input" type="text" v-model="theCart.username" placeholder="名稱" />
@@ -18,6 +20,8 @@
         </ButtonGroup>
         </Form>
     </div>
+  </Col>
+</Row>
 </template>
 
 <script>
@@ -56,10 +60,6 @@ export default {
 
 .input{
   width: 25vw!important;
-}
-
-.regist{
-  margin-bottom: 5px;
 }
 
 ul> li{
