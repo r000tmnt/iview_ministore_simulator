@@ -7,12 +7,11 @@
         </a>
       </div>
     </Col>
-
     <Col :xs="12">
       <nav>
         <ul>
           <!-- <li><Button type="text"><Icon type="md-open" />登入</Button></li> -->
-          <li><Button type="text"><Icon type="md-cart" />購物車</Button></li>
+          <li><Button type="text" @click="openCart"><span class="list_count" v-if="$parent.list_count > 0">{{$parent.list_count}}</span><Icon type="md-cart" />購物車</Button></li>
         </ul>
       </nav>
     </Col>
@@ -20,8 +19,14 @@
 </template>
 
 <script>
+
 export default {
   name: 'head_bar',
+  methods: {
+    openCart(){
+      this.$parent.cart_open = true
+    }
+  }
 }
 </script>
 

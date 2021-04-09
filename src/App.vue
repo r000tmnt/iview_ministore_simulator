@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <head-bar></head-bar>
-    {{sorted_cart}}
+    <shopping-cart v-if="cart_open === true" :prepareCart="sorted_cart"></shopping-cart>
     <img_slider></img_Slider>
     <div id="message">
       <h1>適度的休息，<br>
@@ -16,17 +16,20 @@
 import headBar from './components/head_bar.vue'
 import img_slider from './components/img_slider.vue'
 import theShop from './components/shop.vue'
+import shoppingCart from './components/shopping_cart.vue'
 
 export default {
   name: 'App',
   components: {
-    headBar,img_slider, theShop
+    headBar,img_slider, theShop, shoppingCart
   },
   data(){
     return{
       shop_open: false,
+      cart_open: false,
       logIn_status: false,
       sorted_cart: [],
+      list_count: 0,
       same_name: false
     }
   },
@@ -44,7 +47,9 @@ export default {
           for(let i=0; i < car_length; i++){
             if(data[0].name === this.sorted_cart[i].name){
               this.same_name = true;
-              return this.sorted_cart[i].amount++
+              this.sorted_cart[i].amount++
+              this.list_count++
+              return this.sorted_cart[i].price = this.sorted_cart[i].price * this.sorted_cart[i].amount
             }else{
               this.same_name = false
             }
@@ -52,10 +57,11 @@ export default {
 
           if(this.same_name === false){
             this.sorted_cart[car_length] = data[0]
+            this.list_count++
           }
         }else{
           this.sorted_cart = data
-          console.log(this.sorted_cart[0])
+          this.list_count++
         }
       }
     }

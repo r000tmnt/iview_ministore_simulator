@@ -43,7 +43,7 @@ export default {
         console.log('temp_cart is full')
       }else{
         console.log('Push to temp_cart')
-        this.temp_cart.push({name: this.products[index].name, amount: 1, price: this.products[index].price})
+        this.temp_cart.push({ID: this.products[index].ID, name: this.products[index].name, amount: 1, price: JSON.parse(this.products[index].price), pic: this.products[index].path})
 
         if(Object.keys(this.temp_cart).length > 0){
           this.$emit('getCart', this.temp_cart)
@@ -82,6 +82,7 @@ export default {
 
 .shelf{
   background-image: url('../assets/Grass-Texture.jpg');
+  padding: 5vh 0;
 }
 
 .flex{
