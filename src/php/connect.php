@@ -10,5 +10,4 @@ $passWord = 'poi98799';
 
 $pdo = new PDO($host, $userName, $passWord);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 ?>

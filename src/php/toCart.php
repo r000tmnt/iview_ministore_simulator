@@ -1,18 +1,46 @@
 <?php
-  $err_msg = "";
+  error_reporting(E_ALL);
+  require_once('connect.php');
+
+  $userID = uniqid();
+  $userID = '';
   $username = '';
   $phone = '';
   $list = '';
+  $total = '';
+  $today = date("Y-m-d H:i:s");
 
-  try{
-    require_once('connect.php');  
-    if(isset($POST['username'], $POST['phone'], $POST['list'])){
-      $username = $POST['username'];
-      $phone = $POST['phone'];
-      $list = $POST['list'];
+  //use $_POST to get the FormData
+  // $username = $_POST['username'];
+  // echo 'username: ', $username;
 
-      echo $username, $phone, $list;
-    };
+  try{   
+    if(isset($_POST['username'], $_POST['phone'], $_POST['list'])){
+      $username = $_POST['username'];
+      $phone = $_POST['phone'];
+      $list = $_POST['list'];
+      $total = $_POST['total'];
+
+      echo 'username: ', $username, 'phone: ',$phone, 'list: ', $list, 'total: ', $total;
+
+   
+      $newCart = $pdo -> prepare("INSERT INTO shopping_cart (`user_ID`, `username`, `phone`, `list`, `total_price`, `date`) VALUES (:userID, :username, :phone, :list, :total, :today)");
+      $newCart->bindValue(':userID', $userID);
+      $newCart->bindValue(':username', $username);
+      $newCart->bindValue(':phone', $phone);
+      $newCart->bindValue(':list', $list);
+      $newCart->bindValue(':total', $total);
+      $newCart->bindValue(':date', $today);
+      
+      if($newCart -> execute()){
+        echo '成功送出';
+      }else{
+        echo '送出失敗';
+      }
+      
+    }else{
+      echo 'get nothing';
+    }
   }catch(PDOException $e){
       $err_msg .= "something went wrong" . $e->getMessage() . "<br>";
       $err_msg .= "on line" . $e->getMessage();

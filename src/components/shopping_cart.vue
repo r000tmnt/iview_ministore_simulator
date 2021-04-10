@@ -95,17 +95,16 @@ export default {
 
     submit_cart(){
       let vm = this
+      let formData = new FormData()
+      formData.append('username', vm.userForm.username)
+      formData.append('phone', vm.userForm.phone)
+      formData.append('list', JSON.stringify(vm.theCart))
+      formData.append('total', vm.userForm.total)
+
       if(vm.userForm.username === '' || vm.userForm.phone === ''){
         alert('請確實填入聯絡資料')
       }else{
-        const option = {
-          method: 'POST', 
-          header: {'content-type': 'application/form-data'}, 
-          data: {username: vm.userForm.username, phone: vm.userForm.phone, list: vm.theCart, total: vm.userForm.total},
-          url: 'http://localhost/iview_ministore_simulation/src/php/toCart.php'}
-          console.log(option)
-
-        vm.$https(option).then(response => {
+        vm.$https.post('http://localhost/iview_ministore_simulation/src/php/toCart.php', formData).then(response => {
           console.log(response)
         }).catch(error => console.log(error))          
       }
