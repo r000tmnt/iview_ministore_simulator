@@ -8,7 +8,7 @@
   </div>
 
   <div v-else class="cart_modal">
-    <div class="theForm center" :class="{cart_pushed: cart_pushed.status === true}">
+    <div class="theForm center" :class="{message_show: cart_pushed.status === true || delete_ask.status === true}">
       <h1>您的購物清單</h1>
         <Form id="LoginForm" enctype="multipart/form-data">
           <FormItem>
@@ -19,14 +19,19 @@
             <Input class="input" type="tel" v-model="userForm.phone" placeholder="電話" />
           </FormItem>
           
-          <FormItem v-for="(item, index) in theCart" :key="item.ID">
+          <FormItem class="list_item" v-for="(item, index) in theCart" :key="item.ID">
+            <Button type="error" class="del" @click="delete_check(index)" icon="md-trash" ghost></Button>
             <div class="thumbnail">
               <img :src="item.pic" alt="thumbnail">
+            </div>
+            <div class="item_info">
+              <label for="itemName">
+                <h2>{{item.name}}</h2>
+              </label>
+              <br>
+              <label>數量:</label> <Button class="plus_minus" type="primary" shape="circle" icon="md-remove" v-model="item.amount" @click="price_recount(index, JSON.parse(item.amount-1))"></Button><Input class="number" v-model="item.amount" placeholder="價格" :value="item.amount" autosize @on-change="price_recount(index, JSON.parse(item.amount))"/><Button class="plus_minus" type="primary" shape="circle" icon="md-add" v-model="item.amount" @click="price_recount(index, JSON.parse(item.amount+1))"></Button>
+              <span class="price">{{item.price}} 元</span>              
             </div>            
-            <label for="amount">{{item.name}}</label>
-            <Input class="number" type="number" v-model="item.amount" placeholder="價格" :value="item.amount" autosize @on-change="price_recount(index, JSON.parse(item.amount))"/>
-            <span class="price">{{item.price}} 元</span>
-            <Button type="error" class="del" @click="deleteRow(index)"></Button>
           </FormItem>
           總金額: {{userForm.total}} 元
           <br>
@@ -44,6 +49,16 @@
           <Button :type="cart_pushed.type" @click="cart_status_check">確認</Button>
       </div>
     </div>
+
+    <div class="message_modal" v-if="delete_ask.status === true">
+      <div class="theForm center">
+        <h1 class="message">確定刪除<span style="color: orange">{{delete_ask.message}}</span>?</h1>
+        <ButtonGroup>
+          <Button type="success" @click="proceed_delete(index)">確認</Button>
+          <Button type="warning" @click="cancle_delete()">取消</Button>          
+        </ButtonGroup>        
+      </div>
+    </div>
   </div>
 </template>
 
@@ -59,7 +74,8 @@ export default {
         userForm: {username: '', phone: '', total: 0},
         one_price: [],
         old_amount: [],
-        cart_pushed: {status: false, type: '', message: ''}
+        cart_pushed: {status: false, type: '', message: ''},
+        delete_ask: {status: false, message: '', index: ''}
     }
   },
   methods: {
@@ -68,36 +84,35 @@ export default {
     },
 
     price_recount(index, amount){
+      console.log(index, amount)
       if(amount <= 0){
         this.theCart[index].price = 0
+        this.theCart[index].amount = 0
       }else{
         this.theCart[index].price = this.one_price[index] * amount
+        this.theCart[index].amount = amount
       }
 
       if(this.old_amount[index] < amount){
-        this.userForm.total = this.userForm.total + this.one_price[index]
-        this.old_amount[index]++
-        this.$emit('count_list', {mode: 'plus'})
+        let increase = amount - this.old_amount[index]
+        this.userForm.total = this.userForm.total + (this.one_price[index] * increase)
+        this.$emit('count_list', {mode: 'plus', number: increase})
+        this.old_amount[index] = amount
       }else{
-        if(this.userForm.total - this.one_price[index] <= 0){
+        let decrease = this.old_amount[index] - amount
+        let de_price = this.one_price[index] * decrease
+    
+        if(this.userForm.total - de_price <= 0){
           this.userForm.total = 0
           this.old_amount[index] = 0
           this.$emit('count_list', {mode: 'clear'})
+          this.old_amount[index] = amount
         }else{
-          this.userForm.total = this.userForm.total - this.one_price[index]
-          this.old_amount[index]--
-          this.$emit('count_list', {mode: 'minus'})
+          this.$emit('count_list', {mode: 'minus', number: decrease})
+          this.userForm.total = this.userForm.total - de_price
+          this.old_amount[index] = amount              
         }
       }  
-    },
-
-    deleteRow(index){
-      if(this.theCart.length === 1){
-        this.$emit('count_list', {mode: 'clear'})
-      }else{
-        this.$emit('count_list', {mode: 'minus'})
-      }
-      this.theCart.splice(index, 1)
     },
 
     switch_modal(){
@@ -132,6 +147,26 @@ export default {
       this.theCart.splice(0)
       this.$emit('cart_clear', 0)
       this.$emit('count_list', {mode: 'clear'})
+    },
+
+    delete_check(index){
+      this.delete_ask.status = true
+      this.delete_ask.message = this.theCart[index].name
+      this.delete_ask.index = index
+    },
+
+    proceed_delete(index){
+      if(this.theCart.length === 1){
+        this.$emit('count_list', {mode: 'clear'})
+      }else{
+        this.$emit('count_list', {mode: 'minus'})
+      }
+      this.theCart.splice(index, 1) 
+      this.delete_ask.status = false     
+    },
+
+    cancle_delete(){
+      this.delete_ask.status = false
     }
   },
   created(){
@@ -173,7 +208,7 @@ export default {
   padding: 1%;
   background: #f8f8f9;
   z-index: 2;
-  transition: all .5s ease;
+  transition: all 0s ease;
 }
 
 .message_modal > .theForm{
@@ -181,7 +216,7 @@ export default {
   width: unset;
 }
 
-.cart_pushed{
+.message_show{
   opacity: .5;
 }
 
@@ -190,20 +225,41 @@ p > button{
 }
 
 P > button:hover{
-  color: steelblue!important;
+  color: #328DED!important;
+}
+
+.list_item{
+  border: 1px solid rgba(128, 128, 128, 0.7);
+  border-radius: 10px;
+  padding-bottom: 13px;
+}
+
+.del{
+  border: none!important;
+  border-radius: 10px!important;
+  float: right;
+  width: 22px;
+  opacity: .7;
+}
+
+.del > i{
+  font-size: 1.2rem;
 }
 
 .thumbnail{
-  width: 50px;
-  height: 50px;
-  display: inline-block;
+  width: 150px;
+  height: 150px;
+  float: left;
 }
 
 .thumbnail > img{
   max-width: 100%;
   max-height: 100%;
-  top:16%;
-  transform: translateY(16%);
+  transform: translateY(4%);
+}
+
+.item_info{
+  display: inline-block;
 }
 
 label{
@@ -212,7 +268,17 @@ label{
 }
 
 .input{
-  width: 25vw!important;
+  width: 419px!important;
+}
+
+.plus_minus{
+  padding: 0!important;
+  width: 30px;
+  height: 25px!important;
+}
+
+.plus_minus > i::before{
+  margin-left: 1px;
 }
 
 .number{
@@ -222,16 +288,7 @@ label{
 
 .price{
   color: gray;
-}
-
-.del{
-  width: 22px;
-  margin-left: 15px;
-}
-
-.del::after{
-  content: 'X';
-  margin-left: -5px;
+  margin-left: 3px;
 }
 
 ul> li{
@@ -241,6 +298,21 @@ ul> li{
 @media screen and (max-width: 500px){
   .theForm{
     width: 100vw;
+    padding: 2% 1%;
+  }
+
+  .thumbnail > img{
+    transform: translateY(10%);
+  }
+
+  .number{
+    width: 11vw!important;
+  }
+}
+
+@media screen and (max-width: 450px){
+  .input{
+    width: 90vw!important;
   }
 }
 </style>

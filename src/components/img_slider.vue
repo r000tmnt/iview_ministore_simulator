@@ -143,7 +143,6 @@ nav{
   left: 50%;
   transform: translate(-50%, -50%);
   position: absolute;
-  padding: 1%
 }
 
 .arrows{
@@ -182,8 +181,8 @@ nav{
 }
 
 .dot:hover{
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
 }
 
 button{

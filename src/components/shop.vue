@@ -162,7 +162,11 @@ ul > li{
 
 @media screen and (max-width: 576px){
   .close{
-    margin-left: 40vw;
+    margin: 6vh 0 0 40vw;
+  }
+
+  .shelf{
+    padding-top: 10vh;
   }
 
   .card{

@@ -76,9 +76,10 @@ export default {
     },
 
     listCount(set){
-      if(set.mode === 'plus'){ this.list_count++ }
+      console.log(set)
+      if(set.mode === 'plus'){ this.list_count = this.list_count + set.number }
       if(set.mode === 'clear'){ this.list_count = 0 }
-      if(set.mode === 'minus'){ this.list_count-- }
+      if(set.mode === 'minus'){ this.list_count = this.list_count -set.number }
     },
 
     closeTheShop(signal){
@@ -134,7 +135,6 @@ export default {
 body{
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
 }
 
 #app {
@@ -146,6 +146,7 @@ body{
   color: #2c3e50;
   background-image: linear-gradient(#fff, hsla(36, 100%, 78%, 0.7)), url('./assets/blanket.jpg');
   background-size: contain;
+  overflow-x: hidden;  
 }
 
 #message{
