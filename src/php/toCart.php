@@ -24,7 +24,12 @@
       $newCart->bindValue(':list', $list);
       $newCart->bindValue(':total', $total);
       $newCart->bindValue(':today', $today);
-      $newCart -> execute();       
+
+      if($newCart -> execute()){
+        echo '成功送出';
+      }else{
+        echo '送出失敗';
+      }       
     }else{
       echo 'get nothing';
     }   

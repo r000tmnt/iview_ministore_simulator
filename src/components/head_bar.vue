@@ -25,6 +25,7 @@ export default {
   methods: {
     openCart(){
       this.$parent.cart_open = true
+      this.$parent.fade = true
     }
   }
 }

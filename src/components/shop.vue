@@ -3,7 +3,7 @@
       <div class="modal center">
         <Button type="warning" class="close" @click="shopClose"></Button>
         <main class="shelf flex">
-          <Col span="7" v-for="(product, index) in products" :key="product.id">
+          <Col :lg="7" :md="11" :sm="20" v-for="(product, index) in products" :key="product.id">
             <Card class="card">
               <h1>{{product.name}}</h1>
               <div class="product">
@@ -11,7 +11,7 @@
               </div>
               <p>${{product.price}}</p>
               <ul>
-                <li><Button type="info"><Icon type="md-more" />詳細</Button></li>
+                <!-- <li><Button type="info"><Icon type="md-more" />詳細</Button></li> -->
                 <li><Button type="primary" @click="addToCart(index)"><Icon type="md-add-circle" />加入購物車</Button></li>
               </ul>
               <div class="cart-note" v-if="pushed_items[index].push === true">
@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     shopClose(){
-      this.$parent.shop_open = false;
+      this.$emit('close_shop', false)
     },
     addToCart(index){
       if(this.temp_cart.length > 0){
@@ -106,7 +106,6 @@ export default {
 
 .card{
     margin: 2%;
-    /* background: linear-gradient(0deg, #582209, #ffbc0059); */
 }
 
 h1{
@@ -121,7 +120,7 @@ p{
 
 .product{
   width: 25vw;
-  height: 50vh;
+  height: 40vh;
 }
 
 .product > img{
@@ -149,5 +148,25 @@ ul > li{
   float: right;
   font-size: 1.2rem;
   margin: -10px -10px 0 0;
+}
+
+@media screen and (max-width: 991px){
+  .close{
+    margin: 7px 0 0 45vw;
+  }
+  .product{
+    width: unset;
+    height: unset;
+  }
+}
+
+@media screen and (max-width: 576px){
+  .close{
+    margin-left: 40vw;
+  }
+
+  .card{
+    margin: 2% 0;
+  }
 }
 </style>

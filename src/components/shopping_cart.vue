@@ -1,5 +1,5 @@
 <template>
-  <div v-if="prepareCart.length === 0" class="cart_modal">
+  <div v-if="theCart.length === 0" class="cart_modal">
     <div class="theForm center">
       <h1>尚無商品紀錄</h1>
       <p><Button type="text" @click="switch_modal" ghost>購物請往這邊</Button></p>
@@ -8,7 +8,7 @@
   </div>
 
   <div v-else class="cart_modal">
-    <div class="theForm center">
+    <div class="theForm center" :class="{cart_pushed: cart_pushed.status === true}">
       <h1>您的購物清單</h1>
         <Form id="LoginForm" enctype="multipart/form-data">
           <FormItem>
@@ -37,6 +37,13 @@
           </ButtonGroup>
         </Form>
     </div>
+
+    <div class="message_modal" v-if="cart_pushed.status === true">
+      <div class="theForm center">
+        <h1 class="message">{{cart_pushed.message}}</h1>
+          <Button :type="cart_pushed.type" @click="cart_status_check">確認</Button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -51,12 +58,13 @@ export default {
         theCart: [],
         userForm: {username: '', phone: '', total: 0},
         one_price: [],
-        old_amount: []
+        old_amount: [],
+        cart_pushed: {status: false, type: '', message: ''}
     }
   },
   methods: {
     close(){
-      this.$parent.cart_open = false
+      this.$emit('cart_close', false)
     },
 
     price_recount(index, amount){
@@ -66,31 +74,34 @@ export default {
         this.theCart[index].price = this.one_price[index] * amount
       }
 
-      if(this.theCart[index].old_amount < amount){
+      if(this.old_amount[index] < amount){
         this.userForm.total = this.userForm.total + this.one_price[index]
         this.old_amount[index]++
-        this.$parent.list_count++
+        this.$emit('count_list', {mode: 'plus'})
       }else{
         if(this.userForm.total - this.one_price[index] <= 0){
           this.userForm.total = 0
           this.old_amount[index] = 0
-          this.$parent.list_count = 0
+          this.$emit('count_list', {mode: 'clear'})
         }else{
           this.userForm.total = this.userForm.total - this.one_price[index]
           this.old_amount[index]--
-          this.$parent.list_count--
+          this.$emit('count_list', {mode: 'minus'})
         }
       }  
     },
 
     deleteRow(index){
-      this.$parent.list_count = this.$parent.list_count - this.theCart[index].amount
+      if(this.theCart.length === 1){
+        this.$emit('count_list', {mode: 'clear'})
+      }else{
+        this.$emit('count_list', {mode: 'minus'})
+      }
       this.theCart.splice(index, 1)
     },
 
     switch_modal(){
-      this.$parent.shop_open = true
-      this.$parent.cart_open = false
+      this.$emit('modal_switch', {shop_open: true, cart_open: false})
     },
 
     submit_cart(){
@@ -105,9 +116,22 @@ export default {
         alert('請確實填入聯絡資料')
       }else{
         vm.$https.post('http://localhost/iview_ministore_simulation/src/php/toCart.php', formData).then(response => {
-          console.log(response)
-        }).catch(error => console.log(error))          
+          this.cart_pushed.status = true
+          this.cart_pushed.message = response.data
+          this.cart_pushed.type = 'success'
+        }).catch(error => {
+          this.cart_pushed.status = true
+          this.cart_pushed.type = 'failed'
+          console.log(error)
+        } )          
       }
+    },
+
+    cart_status_check(){
+      this.cart_pushed.status = false
+      this.theCart.splice(0)
+      this.$emit('cart_clear', 0)
+      this.$parent.list_count = 0
     }
   },
   created(){
@@ -149,6 +173,16 @@ export default {
   padding: 1%;
   background: #f8f8f9;
   z-index: 2;
+  transition: all .5s ease;
+}
+
+.message_modal > .theForm{
+  /* border: 1px solid red; */
+  width: unset;
+}
+
+.cart_pushed{
+  opacity: .5;
 }
 
 p > button{
@@ -202,5 +236,11 @@ label{
 
 ul> li{
   list-style: none;
+}
+
+@media screen and (max-width: 500px){
+  .theForm{
+    width: 100vw;
+  }
 }
 </style>

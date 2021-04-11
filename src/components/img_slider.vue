@@ -2,17 +2,23 @@
   <Row> 
     <Col span="24">
       <main>
-        <transition-group class="slider" name="slide">
+        <transition-group class="slider" :name="slideBack? 'slideBack' : 'slide'">
             <div class="img_slide" :key="img_index">
                 <img :src="currentIMG" alt="cake">
             </div>
         </transition-group>
         
         <nav class="direction">
-            <ul>
-                <li><button><Icon class="left" type="md-arrow-dropleft" /></button></li>
-                <li><button><Icon class="right" type="md-arrow-dropright" /></button></li>
+            <ul class="arrows">
+                <li><button @click="prevIMG(img_index)"><Icon class="left" type="md-arrow-dropleft" /></button></li>
+                <li><button @click="nextIMG(img_index)"><Icon class="right" type="md-arrow-dropright" /></button></li>
             </ul>
+        </nav>
+
+        <nav class="circles">
+            <ul class="dots">
+                <li class="dot" v-for="(img, index) in img_sources" :key="index" :class="{here: index === img_index}" @click="toIndex(index)"></li>
+            </ul>            
         </nav>
       </main>
     </Col>
@@ -28,23 +34,45 @@ export default {
           img_index: 0,
           currentIMG: '',
           img_total: '',
+          slideBack: false
       } 
   },
   methods: {
       img_slider(){
           window.setInterval(()=>{
-              this.getIMG(this.img_index)
+              if(this.slideBack === false){
+                  this.nextIMG(this.img_index)
+              }else{
+                  this.prevIMG(this.img_index)
+              }
           }, 5000)
       },
 
-      getIMG(index){
-        if(index === this.img_total-1){
-            this.img_index = 0
-            return this.currentIMG = this.img_sources[0]
-        }else if(this.img_sources[index+1] !== undefined){
-            this.img_index = index+1
-            return this.currentIMG = this.img_sources[this.img_index]
-        }
+      nextIMG(index){
+          this.slideBack = false
+          if(index === this.img_total-1){
+              this.img_index = 0
+              return this.currentIMG = this.img_sources[0]
+          }else if(this.img_sources[index+1] !== undefined){
+              this.img_index = index+1
+              return this.currentIMG = this.img_sources[this.img_index]
+          }
+      },
+
+      prevIMG(index){
+          this.slideBack = true
+          if(index === 0){
+              this.img_index = this.img_total-1
+              return this.currentIMG = this.img_sources[this.img_total-1]
+          }else if(this.img_sources[index-1] !== undefined){
+              this.img_index = index-1
+              return this.currentIMG = this.img_sources[this.img_index]
+          }          
+      },
+
+      toIndex(index){
+          this.currentIMG = this.img_sources[index]
+          this.img_index = index
       }
   },
   created(){
@@ -75,8 +103,18 @@ export default {
     transform: translate(-100%,0);
 }
 
-.slider{
+.slideBack-enter-active, .slideBack-leave-active {
+    transition: all 1.5s ease-in-out;
+}
+.slideBack-enter{
+    transform: translate(-100%, 0);
+}
 
+.slideBack-leave-to{
+    transform: translate(100%,0);
+}
+
+.slider{
     overflow: hidden;
 }
 
@@ -89,6 +127,10 @@ export default {
     left: 0;
     bottom: 0;
     right: 0;
+}
+
+.here{
+    background: orange;
 }
 
 main{
@@ -104,16 +146,44 @@ nav{
   padding: 1%
 }
 
-ul{
+.arrows{
   width: 100vw;
   display: flex;
   justify-content: space-between;
   font-size: 1.5rem;
 }
 
-ul > li{
+.arrows > li{
   list-style: none;
   margin: 0 1%;
+}
+
+.circles{
+    margin-top: 26vh;
+    width: 100vw;
+}
+
+.dots{
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    /* border: 1px solid red; */
+    padding: 2%;
+}
+
+.dot{
+    border: 1px solid #232;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    transition: all .5s ease;
+    margin: 0 .2%;
+    cursor: pointer;
+}
+
+.dot:hover{
+    width: 20px;
+    height: 20px;
 }
 
 button{

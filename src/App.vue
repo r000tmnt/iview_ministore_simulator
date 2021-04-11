@@ -1,14 +1,23 @@
 <template>
   <div id="app">
     <head-bar></head-bar>
-    <shopping-cart v-if="cart_open === true" :prepareCart="sorted_cart"></shopping-cart>
+
+    <transition-group :name="fade? 'fadeIn' : 'fadeOut'">
+      <shopping-cart v-if="cart_open === true" :prepareCart="sorted_cart" @cart_close="closeTheCart($event)" @modal_switch="switch_modal($event)" @cart_clear="clearTheCart($event)" @count_list="listCount($event)" key="cart"></shopping-cart>
+    </transition-group>
+    
     <img_slider></img_Slider>
     <div id="message">
       <h1>適度的休息，<br>
         是開起精神的好夥伴</h1>
     </div>
+
     <button class="goToshop" @click="openShop"><Icon type="md-pizza" />購物去</button>
-    <the-shop v-if="shop_open === true" @getCart="getTheCart($event)"></the-shop>
+
+    <transition-group :name="fade? 'fadeIn' : 'fadeOut'">
+      <the-shop v-if="shop_open === true" @getCart="getTheCart($event)" @close_shop="closeTheShop($event)" key="shop"></the-shop>      
+    </transition-group>
+
   </div>
 </template>
 
@@ -30,17 +39,17 @@ export default {
       logIn_status: false,
       sorted_cart: [],
       list_count: 0,
-      same_name: false
+      same_name: false,
+      fade: false
     }
   },
   methods: {
     openShop(){
       this.shop_open = true
+      this.fade = true
     },
 
     getTheCart(data){
-      console.log(data[0])
-
       if(data !== undefined){
         if(this.sorted_cart.length > 0){
           let car_length = this.sorted_cart.length;
@@ -64,8 +73,33 @@ export default {
           this.list_count++
         }
       }
+    },
+
+    listCount(set){
+      if(set.mode === 'plus'){ this.list_count++ }
+      if(set.mode === 'clear'){ this.list_count = 0 }
+      if(set.mode === 'minus'){ this.list_count-- }
+    },
+
+    closeTheShop(signal){
+      this.fade = false
+      this.shop_open = signal
+    },
+    
+    closeTheCart(signal){
+      this.fade = false
+      this.cart_open = signal
+    },
+
+    clearTheCart(signal){
+      this.sorted_cart.splice(signal)
+    },
+    
+    switch_modal(signals){
+      this.cart_open = signals.cart_open
+      this.shop_open = signals.shop_open
     }
-  },
+  },  
   created(){ //Check login or not
     if(this.logIn_status === false){
       this.form_active = true
@@ -75,6 +109,28 @@ export default {
 </script>
 
 <style>
+.fadeIn-enter-active, .fadeIn-leave-active {
+    transition: all 0.5s ease;
+}
+.fadeIn-enter{
+    opacity: 0;
+}
+
+.fadeIn-leave-to{
+    opacity: 1;
+}
+
+.fadeOut-enter-active, .fadeOut-leave-active {
+    transition: all 0.5s ease;
+}
+.fadeOut-enter{
+    opacity: 1;
+}
+
+.fadeOut-leave-to{
+    opacity: 0;
+}
+
 body{
   margin: 0;
   padding: 0;
