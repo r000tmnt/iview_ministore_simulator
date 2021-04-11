@@ -131,7 +131,7 @@ export default {
       this.cart_pushed.status = false
       this.theCart.splice(0)
       this.$emit('cart_clear', 0)
-      this.$parent.list_count = 0
+      this.$emit('count_list', {mode: 'clear'})
     }
   },
   created(){
