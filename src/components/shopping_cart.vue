@@ -193,7 +193,7 @@ export default {
 }
 
 .cart_modal{
-  width: 100vw;
+  width: 101vw;
   height: 100vh;
   background: rgba(51, 42, 34, 0.7);
   position: absolute;
@@ -311,6 +311,10 @@ ul> li{
 }
 
 @media screen and (max-width: 450px){
+  .cart_modal{
+    margin-top: -12vh
+  }
+
   .input{
     width: 90vw!important;
   }

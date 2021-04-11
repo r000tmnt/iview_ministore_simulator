@@ -18,6 +18,15 @@
       <the-shop v-if="shop_open === true" @getCart="getTheCart($event)" @close_shop="closeTheShop($event)" key="shop"></the-shop>      
     </transition-group>
 
+    <footer :class="{modal_open: cart_open === true || shop_open === true}">
+      <ul>
+        <li>聯絡人: 鄭秀美</li>
+        <li>電話: 0922846018</li>
+        <li>信箱: <a class="font-color" href="mailto:a0922846018@gmail.com">a0922846018@gmail.com</a></li>
+      </ul>
+
+      <div class="copyRight"><h4>&copy;Biken ministore 2021</h4></div>
+    </footer>
   </div>
 </template>
 
@@ -76,7 +85,6 @@ export default {
     },
 
     listCount(set){
-      console.log(set)
       if(set.mode === 'plus'){ this.list_count = this.list_count + set.number }
       if(set.mode === 'clear'){ this.list_count = 0 }
       if(set.mode === 'minus'){ this.list_count = this.list_count -set.number }
@@ -132,6 +140,10 @@ export default {
     opacity: 0;
 }
 
+.modal_open{
+  position: unset;
+}
+
 body{
   margin: 0;
   padding: 0;
@@ -156,6 +168,7 @@ body{
 }
 
 .goToshop{
+  box-sizing: border-box;
   font-size: 2rem;
   padding: .5%;
   border: none;
@@ -165,5 +178,21 @@ body{
 
 .goToshop:hover{
   border-bottom: 3px solid rgb(92, 51, 3);
+  transition: border .1s ease;
+}
+
+footer{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100vw;
+}
+
+li > a{
+  color: #2c3e50
+}
+
+li > a:hover{
+  color: #328DED;
 }
 </style>

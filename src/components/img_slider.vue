@@ -207,4 +207,10 @@ button:hover{
 .right::before{
     margin-left: 2px;
 }
+
+@media screen and (max-width: 500px){
+    .dot{
+        margin: 0 1%;
+    }
+}
 </style>

@@ -71,6 +71,7 @@ export default {
   width: 100vw;
   height: 100vh;
   background-color: white;
+  overflow-x: auto;
 }
 
 .center{
@@ -106,6 +107,7 @@ export default {
 
 .card{
     margin: 2%;
+    transition: all 0s ease;
 }
 
 h1{
