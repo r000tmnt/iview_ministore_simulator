@@ -1,7 +1,7 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://localhost:8080");
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: X-Requested-With, Content-Type, Accept');
+header('Access-Control-Allow-Headers: X-Requested-With, Content-Type, Accept, Authorization');
 error_reporting(E_ALL);
 
 $host = 'mysql:host=localhost;debname=biken_ministore;chartset=utf8';

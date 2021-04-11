@@ -1,9 +1,5 @@
 <?php
-  error_reporting(E_ALL);
-  require_once('connect.php');
-
-  $userID = uniqid();
-  $userID = '';
+  $err_msg = '';
   $username = '';
   $phone = '';
   $list = '';
@@ -15,32 +11,23 @@
   // echo 'username: ', $username;
 
   try{   
+    require_once('connect.php');
     if(isset($_POST['username'], $_POST['phone'], $_POST['list'])){
       $username = $_POST['username'];
       $phone = $_POST['phone'];
       $list = $_POST['list'];
       $total = $_POST['total'];
-
-      echo 'username: ', $username, 'phone: ',$phone, 'list: ', $list, 'total: ', $total;
-
-   
-      $newCart = $pdo -> prepare("INSERT INTO shopping_cart (`user_ID`, `username`, `phone`, `list`, `total_price`, `date`) VALUES (:userID, :username, :phone, :list, :total, :today)");
-      $newCart->bindValue(':userID', $userID);
+      
+      $newCart = $pdo -> prepare("INSERT INTO biken_ministore.shopping_cart (`username`, `phone`, `list`, `total_price`, `date`) VALUES (:username, :phone, :list, :total, :today)");
       $newCart->bindValue(':username', $username);
       $newCart->bindValue(':phone', $phone);
       $newCart->bindValue(':list', $list);
       $newCart->bindValue(':total', $total);
-      $newCart->bindValue(':date', $today);
-      
-      if($newCart -> execute()){
-        echo '成功送出';
-      }else{
-        echo '送出失敗';
-      }
-      
+      $newCart->bindValue(':today', $today);
+      $newCart -> execute();       
     }else{
       echo 'get nothing';
-    }
+    }   
   }catch(PDOException $e){
       $err_msg .= "something went wrong" . $e->getMessage() . "<br>";
       $err_msg .= "on line" . $e->getMessage();
