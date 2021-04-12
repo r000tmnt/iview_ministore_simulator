@@ -270,6 +270,9 @@ P > button:hover{
   transform: translate(7%, -7%);
 }
 
+.item_info{
+  margin-top: -19px;
+}
 
 label{
   margin: 0 1vw;
@@ -307,6 +310,14 @@ ul> li{
   .theForm{
     width: 100vw;
     padding: 2% 1%;
+  }
+
+  .list_item{
+    padding-bottom: 40px;
+  }
+
+  .thumbnail{
+    margin-top: -19px;
   }
 
   .thumbnail > img{
