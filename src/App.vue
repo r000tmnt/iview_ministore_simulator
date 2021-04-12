@@ -18,7 +18,7 @@
       <the-shop v-if="shop_open === true" @getCart="getTheCart($event)" @close_shop="closeTheShop($event)" key="shop"></the-shop>      
     </transition-group>
 
-    <footer :class="{modal_open: cart_open === true || shop_open === true}">
+    <footer>
       <ul>
         <li>聯絡人: 鄭秀美</li>
         <li>電話: 0922846018</li>
@@ -140,10 +140,6 @@ export default {
     opacity: 0;
 }
 
-.modal_open{
-  position: unset;
-}
-
 body{
   margin: 0;
   padding: 0;
@@ -179,13 +175,6 @@ body{
 .goToshop:hover{
   border-bottom: 3px solid rgb(92, 51, 3);
   transition: border .1s ease;
-}
-
-footer{
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100vw;
 }
 
 li > a{

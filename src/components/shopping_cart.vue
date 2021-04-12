@@ -18,22 +18,24 @@
           <FormItem>
             <Input class="input" type="tel" v-model="userForm.phone" placeholder="電話" />
           </FormItem>
-          
-          <FormItem class="list_item" v-for="(item, index) in theCart" :key="item.ID">
-            <Button type="error" class="del" @click="delete_check(index)" icon="md-trash" ghost></Button>
-            <div class="clear"></div>
-            <div class="thumbnail">
-              <img :src="item.pic" alt="thumbnail">
-            </div>
-            <div class="item_info">
-              <label for="itemName">
-                <h2>{{item.name}}</h2>
-              </label>
-              <br>
-              <label>數量:</label> <Button class="plus_minus" :disabled="item.amount === 0" type="primary" shape="circle" icon="md-remove" v-model="item.amount" @click="price_recount(index, JSON.parse(item.amount-1))"></Button><Input class="number" v-model="item.amount" placeholder="價格" :value="item.amount" autosize @on-change="price_recount(index, JSON.parse(item.amount))"/><Button class="plus_minus" type="primary" shape="circle" icon="md-add" v-model="item.amount" @click="price_recount(index, JSON.parse(item.amount+1))"></Button>
-              <label class="price">{{item.price}} 元</label>              
-            </div>            
-          </FormItem>
+
+          <div class="list_container" :class="{aLot: theCart.length > 3}">
+            <FormItem class="list_item" v-for="(item, index) in theCart" :key="item.ID">
+              <Button type="error" class="del" @click="delete_check(index)" icon="md-trash" ghost></Button>
+              <div class="clear"></div>
+              <div class="thumbnail">
+                <img :src="item.pic" alt="thumbnail">
+              </div>
+              <div class="item_info">
+                <label for="itemName">
+                  <h2>{{item.name}}</h2>
+                </label>
+                <br>
+                <label>數量:</label> <Button class="plus_minus" :disabled="item.amount === 0" type="primary" shape="circle" icon="md-remove" v-model="item.amount" @click="price_recount(index, JSON.parse(item.amount-1))"></Button><Input class="number" v-model="item.amount" placeholder="價格" :value="item.amount" autosize @on-change="price_recount(index, JSON.parse(item.amount))"/><Button class="plus_minus" type="primary" shape="circle" icon="md-add" v-model="item.amount" @click="price_recount(index, JSON.parse(item.amount+1))"></Button>
+                <label class="price">{{item.price}} 元</label>              
+              </div>            
+            </FormItem>
+          </div>
           總金額: {{userForm.total}} 元
           <br>
           <p><Button type="text" @click="switch_modal" ghost>繼續購物</Button></p>
@@ -233,6 +235,11 @@ P > button:hover{
   color: #5AA4F0!important;
 }
 
+.aLot{
+  height: 639px;
+  overflow-y: scroll;
+}
+
 .list_item{
   border: 1px solid rgba(128, 128, 128, 0.7);
   border-radius: 10px;
@@ -260,12 +267,9 @@ P > button:hover{
 .thumbnail > img{
   max-width: 100%;
   max-height: 100%;
-  transform: translateY(4%);
+  transform: translate(7%, -7%);
 }
 
-.item_info{
-  display: inline-block;
-}
 
 label{
   margin: 0 1vw;
