@@ -215,7 +215,7 @@ export default {
   padding: 1%;
   background: #f8f8f9;
   z-index: 2;
-  transition: all 0s ease;
+  transition: all .5s ease;
 }
 
 .message_modal > .theForm{
@@ -321,7 +321,7 @@ ul> li{
   }
 
   .thumbnail > img{
-    transform: translateY(10%);
+    transform: translate(10%, 10%);
   }
 
   .number{
@@ -332,6 +332,10 @@ ul> li{
 @media screen and (max-width: 450px){
   .cart_modal{
     margin-top: -12vh
+  }
+
+  .theForm{
+    margin-top: 8vh;
   }
 
   .input{
