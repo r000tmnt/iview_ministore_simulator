@@ -21,6 +21,7 @@
           
           <FormItem class="list_item" v-for="(item, index) in theCart" :key="item.ID">
             <Button type="error" class="del" @click="delete_check(index)" icon="md-trash" ghost></Button>
+            <div class="clear"></div>
             <div class="thumbnail">
               <img :src="item.pic" alt="thumbnail">
             </div>
@@ -29,8 +30,8 @@
                 <h2>{{item.name}}</h2>
               </label>
               <br>
-              <label>數量:</label> <Button class="plus_minus" type="primary" shape="circle" icon="md-remove" v-model="item.amount" @click="price_recount(index, JSON.parse(item.amount-1))"></Button><Input class="number" v-model="item.amount" placeholder="價格" :value="item.amount" autosize @on-change="price_recount(index, JSON.parse(item.amount))"/><Button class="plus_minus" type="primary" shape="circle" icon="md-add" v-model="item.amount" @click="price_recount(index, JSON.parse(item.amount+1))"></Button>
-              <span class="price">{{item.price}} 元</span>              
+              <label>數量:</label> <Button class="plus_minus" :disabled="item.amount === 0" type="primary" shape="circle" icon="md-remove" v-model="item.amount" @click="price_recount(index, JSON.parse(item.amount-1))"></Button><Input class="number" v-model="item.amount" placeholder="價格" :value="item.amount" autosize @on-change="price_recount(index, JSON.parse(item.amount))"/><Button class="plus_minus" type="primary" shape="circle" icon="md-add" v-model="item.amount" @click="price_recount(index, JSON.parse(item.amount+1))"></Button>
+              <label class="price">{{item.price}} 元</label>              
             </div>            
           </FormItem>
           總金額: {{userForm.total}} 元
@@ -84,8 +85,8 @@ export default {
     },
 
     price_recount(index, amount){
-      console.log(index, amount)
       if(amount <= 0){
+        amount = 0
         this.theCart[index].price = 0
         this.theCart[index].amount = 0
       }else{
@@ -185,6 +186,10 @@ export default {
 </script>
 
 <style>
+.clear{
+  clear: both;
+}
+
 .center{
   top: 50%;
   left: 50%;
@@ -193,7 +198,7 @@ export default {
 }
 
 .cart_modal{
-  width: 101vw;
+  width: 100vw;
   height: 100vh;
   background: rgba(51, 42, 34, 0.7);
   position: absolute;
@@ -225,7 +230,7 @@ p > button{
 }
 
 P > button:hover{
-  color: #328DED!important;
+  color: #5AA4F0!important;
 }
 
 .list_item{
@@ -273,12 +278,12 @@ label{
 
 .plus_minus{
   padding: 0!important;
-  width: 30px;
+  width: 26px!important;
   height: 25px!important;
 }
 
 .plus_minus > i::before{
-  margin-left: 1px;
+  margin-left: 0.5px;
 }
 
 .number{
@@ -288,7 +293,6 @@ label{
 
 .price{
   color: gray;
-  margin-left: 3px;
 }
 
 ul> li{
