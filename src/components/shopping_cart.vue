@@ -57,7 +57,7 @@
       <div class="theForm center">
         <h1 class="message">確定刪除<span style="color: orange">{{delete_ask.message}}</span>?</h1>
         <ButtonGroup>
-          <Button type="success" @click="proceed_delete(index)">確認</Button>
+          <Button type="success" @click="proceed_delete()">確認</Button>
           <Button type="warning" @click="cancle_delete()">取消</Button>          
         </ButtonGroup>        
       </div>
@@ -158,7 +158,8 @@ export default {
       this.delete_ask.index = index
     },
 
-    proceed_delete(index){
+    proceed_delete(){
+      let index = this.delete_ask.index
       if(this.theCart.length === 1){
         this.$emit('count_list', {mode: 'clear'})
       }else{
