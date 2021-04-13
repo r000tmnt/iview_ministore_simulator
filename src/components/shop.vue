@@ -1,7 +1,11 @@
 <template>
   <Row> 
       <div class="modal center">
-        <Button type="warning" class="close" @click="shopClose"></Button>
+        <div class="btn_box">
+          <Button type="warning" class="btn close" @click="shopClose"></Button> 
+          <span class="list_count" v-if="listCount > 0">{{listCount}}</span>                     
+          <Button type="primary" icon="md-cart" class="btn toShop" @click="switch_modal"></Button>        
+        </div>
         <main class="shelf flex">
           <Col :lg="7" :md="11" :sm="20" v-for="(product, index) in products" :key="product.id">
             <Card class="card">
@@ -14,8 +18,8 @@
                 <!-- <li><Button type="info"><Icon type="md-more" />詳細</Button></li> -->
                 <li><Button type="primary" @click="addToCart(index)"><Icon type="md-add-circle" />加入購物車</Button></li>
               </ul>
-              <div class="cart-note" v-if="pushed_items[index].push === true">
-                <Icon type="md-cart" />
+              <div class="cart-note" v-if="product.push === true">
+                已加入
               </div> 
           </Card>
         </Col>
@@ -27,29 +31,50 @@
 <script>
 export default {
   name: 'theShop',
+  props: {
+    listCount: Number,
+    pushID: Array,
+    deleteID: Object
+  },
   data(){
       return{
           products: [],
-          pushed_items: [],
-          temp_cart: []
+          temp_cart: [],
       }
+  },
+  watch: {
+    deleteID: {
+      immediate: true,
+      deep: true,
+      handler(){
+        if(this.deleteID.deleted !== false && this.products !== []){
+          for(let i=0; i < this.products.length; i++){
+            if(this.deleteID.id === this.products[i].ID){
+              this.products[i].push = false
+            }
+          }          
+        }
+
+      }
+    }
+
   },
   methods: {
     shopClose(){
       this.$emit('close_shop', false)
     },
-    addToCart(index){
-      if(this.temp_cart.length > 0){
-        // console.log('temp_cart is full')
-      }else{
-        // console.log('Push to temp_cart')
-        this.temp_cart.push({ID: this.products[index].ID, name: this.products[index].name, amount: 1, price: JSON.parse(this.products[index].price), pic: this.products[index].path})
 
-        if(Object.keys(this.temp_cart).length > 0){
-          this.$emit('getCart', this.temp_cart)
-          this.temp_cart = []
-          this.pushed_items[index].push = true
-        }
+    switch_modal(){
+      this.$emit('modal_switch', {shop_open: true, cart_open: true})
+    },
+
+    addToCart(index){
+      this.temp_cart.push({ID: this.products[index].ID, name: this.products[index].name, amount: 1, price: JSON.parse(this.products[index].price), pic: this.products[index].path})
+
+      if(Object.keys(this.temp_cart).length > 0){
+        this.$emit('getCart', this.temp_cart)
+        this.temp_cart = []
+        this.products[index].push = true
       }
     }
   },
@@ -58,8 +83,19 @@ export default {
       vm.$https.get('http://localhost/iview_ministore_simulation/src/php/get_images.php').then(response => {
           for(let i=0; i < response.data.length; i++){
               vm.products.push(response.data[i])
-              vm.pushed_items.push({id: response.data[i].ID, push: false})
+              vm.products[i].push = false
           }
+
+          if(this.pushID.length > 0){
+            for(let i=0; i < vm.pushID.length; i++){
+              let thepushedID = vm.pushID[i]
+                for(let j=0; j < vm.products.length; j++){
+                  if(vm.products[j].ID === thepushedID){
+                    vm.products[j].push = true
+                  }
+                }              
+            }            
+          }  
       })
   }
 }
@@ -72,6 +108,7 @@ export default {
   height: 100vh;
   background-color: white;
   overflow-x: auto;
+  background-image: url('../assets/Grass-Texture.jpg');
 }
 
 .center{
@@ -82,7 +119,6 @@ export default {
 }
 
 .shelf{
-  background-image: url('../assets/Grass-Texture.jpg');
   padding: 5vh 0;
 }
 
@@ -92,12 +128,39 @@ export default {
     flex-wrap: wrap;
 }
 
+.btn_box{
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: row-reverse;
+  width: 98vw;
+  z-index: 2;
+  padding: .5% .5% 0 0;
+}
+
+.list_count{
+  width: 20px;
+  border: 1px solid lightblue;
+  border-radius: 50%;
+  background: white;
+  color: #5AA4F0;
+  position: absolute;
+  margin: 2px 65px 0 0;
+  font-size: .1rem;
+  font-weight: bold;
+}
+
+.btn{
+  border-radius: 50%;
+  margin: 0.5% 0 0 0;
+}
+
+.toShop{
+  margin-right: 10px;
+}
+
 .close{
   width: 22px;
-  border-radius: 50%;
-  margin: 1% 2% 0 0;
-  position: absolute;
-  margin-left: 46vw;
 }
 
 .close::after{
@@ -148,13 +211,13 @@ ul > li{
 
 .cart-note{
   float: right;
-  font-size: 1.2rem;
-  margin: -10px -10px 0 0;
+  margin: -10px -8px 0 0;
 }
 
 @media screen and (max-width: 991px){
-  .close{
-    margin: 7px 0 0 45vw;
+  .btn_box{
+    width: 97vw;
+    margin-top: 7px;
   }
   .product{
     width: unset;
@@ -163,12 +226,12 @@ ul > li{
 }
 
 @media screen and (max-width: 576px){
-  .close{
-    margin: 8vh 0 0 40vw;
+  .btn_box{
+    margin-top: 8vh;
   }
 
   .shelf{
-    padding-top: 12vh;
+    padding-top: unset;
   }
 
   .card{

@@ -1,14 +1,12 @@
 <template>
-  <div v-if="theCart.length === 0" class="cart_modal">
-    <div class="theForm center">
+  <div class="cart_modal" :style="{'margin-top': cart_modal_style.modal_top + 'vh'}">
+    <div class="theForm center" v-if="theCart.length === 0">
       <h1>尚無商品紀錄</h1>
       <p><Button type="text" @click="switch_modal" ghost>購物請往這邊</Button></p>
-      <Button type="warning" @click="close">關閉</Button>
+      <Button type="warning" @click.stop="close">關閉</Button>
     </div>
-  </div>
 
-  <div v-else class="cart_modal">
-    <div class="theForm center" :class="{message_show: cart_pushed.status === true || delete_ask.status === true}">
+ <div class="theForm center" v-else :class="{message_show: cart_pushed.status === true || delete_ask.status === true}">
       <h1>您的購物清單</h1>
         <Form id="LoginForm" enctype="multipart/form-data">
           <FormItem>
@@ -19,7 +17,7 @@
             <Input class="input" type="tel" v-model="userForm.phone" placeholder="電話" />
           </FormItem>
 
-          <div class="list_container" :class="{aLot: theCart.length > 3}">
+          <div class="list_container" :style="{'height': cart_modal_style.list_height + 'px'}">
             <FormItem class="list_item" v-for="(item, index) in theCart" :key="item.ID">
               <Button type="error" class="del" @click="delete_check(index)" icon="md-trash" ghost></Button>
               <div class="clear"></div>
@@ -61,7 +59,7 @@
           <Button type="warning" @click="cancle_delete()">取消</Button>          
         </ButtonGroup>        
       </div>
-    </div>
+    </div>    
   </div>
 </template>
 
@@ -73,15 +71,28 @@ export default {
   },
   data(){
     return{
-        theCart: [],
-        userForm: {username: '', phone: '', total: 0},
-        one_price: [],
-        old_amount: [],
-        cart_pushed: {status: false, type: '', message: ''},
-        delete_ask: {status: false, message: '', index: ''}
+      windowHeight: window.innerHeight,
+      cart_modal_style: {modal_top: '', list_height: ''},
+      theCart: [],
+      userForm: {username: '', phone: '', total: 0},
+      one_price: [],
+      old_amount: [],
+      cart_pushed: {status: false, type: '', message: ''},
+      delete_ask: {status: false, message: '', index: ''}
     }
   },
   methods: {
+    set_modal(windowHeight){
+      if(windowHeight <= 764 && this.theCart.length >= 2){
+        this.cart_modal_style.list_height = 418
+        this.cart_modal_style.modal_top = -13
+      }else if(windowHeight <= 764){ this.cart_modal_style.modal_top = -13 }
+
+      if(windowHeight > 764 && this.theCart.length >= 3){
+        this.cart_modal_style.list_height = 639
+      }
+    },
+
     close(){
       this.$emit('cart_close', false)
     },
@@ -137,8 +148,10 @@ export default {
           this.cart_pushed.status = true
           this.cart_pushed.message = response.data
           this.cart_pushed.type = 'success'
+          this.$emit('cart_push_check', true)
         }).catch(error => {
           this.cart_pushed.status = true
+          this.cart_pushed.message = error.data
           this.cart_pushed.type = 'failed'
           console.log(error)
         } )          
@@ -161,11 +174,9 @@ export default {
     proceed_delete(){
       let index = this.delete_ask.index
       let deletePrice = this.one_price[index] * this.theCart[index].amount
-      if(this.theCart.length === 1){
-        this.$emit('count_list', {mode: 'clear'})
-      }else{
-        this.$emit('count_list', {mode: 'minus', number: this.theCart[index].amount})
-      }
+
+      this.$emit('count_list', {mode: 'deleteRow', number: this.theCart[index].amount, delete_id: this.theCart[index].ID, delete_index: index})
+
       this.userForm.total = this.userForm.total - deletePrice
       this.theCart.splice(index, 1) 
       this.one_price.splice(index, 1)
@@ -179,6 +190,7 @@ export default {
   },
   created(){
     this.theCart = this.prepareCart
+    this.set_modal(this.windowHeight)
     var setPrice = new Array()
     if(this.prepareCart.length > 0){
       for(let i=0; i < this.theCart.length; i++){
@@ -240,8 +252,7 @@ P > button:hover{
   color: #5AA4F0!important;
 }
 
-.aLot{
-  height: 639px;
+.list_container{
   overflow-y: scroll;
 }
 

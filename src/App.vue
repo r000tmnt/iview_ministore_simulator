@@ -15,7 +15,7 @@
     <button class="goToshop" @click="openShop"><Icon type="md-pizza" />購物去</button>
 
     <transition-group :name="fade? 'fadeIn' : 'fadeOut'">
-      <the-shop v-if="shop_open === true" @getCart="getTheCart($event)" @close_shop="closeTheShop($event)" key="shop"></the-shop>      
+      <the-shop v-if="shop_open === true" :listCount="list_count" :pushID="pushed_id" :deleteID = delete_id @getCart="getTheCart($event)" @close_shop="closeTheShop($event)" @modal_switch="switch_modal($event)" key="shop"></the-shop>      
     </transition-group>
 
     <footer>
@@ -47,6 +47,8 @@ export default {
       cart_open: false,
       logIn_status: false,
       sorted_cart: [],
+      pushed_id: [],
+      delete_id: {deleted: false, id: ''},
       list_count: 0,
       same_name: false,
       fade: false
@@ -75,10 +77,12 @@ export default {
 
           if(this.same_name === false){
             this.sorted_cart[car_length] = data[0]
+            this.pushed_id.push(data[0].ID)
             this.list_count++
           }
         }else{
           this.sorted_cart = data
+          this.pushed_id.push(data[0].ID)
           this.list_count++
         }
       }
@@ -88,6 +92,11 @@ export default {
       if(set.mode === 'plus'){ this.list_count = this.list_count + set.number }
       if(set.mode === 'clear'){ this.list_count = 0 }
       if(set.mode === 'minus'){ this.list_count = this.list_count -set.number }
+      if(set.mode === 'deleteRow'){
+        this.list_count = this.list_count - set.number
+        this.delete_id= {deleted: true, id: set.delete_id}
+        this.pushed_id.splice(set.delete_index, 1)
+      }
     },
 
     closeTheShop(signal){

@@ -11,7 +11,7 @@
       <nav>
         <ul>
           <!-- <li><Button type="text"><Icon type="md-open" />登入</Button></li> -->
-          <li><Button class="shopping_cart" type="text" @click="openCart"><span class="list_count" v-if="$parent.list_count > 0">{{$parent.list_count}}</span><Icon type="md-cart" />購物車</Button></li>
+          <li><Button class="shopping_cart" type="text" @click="openCart"><Icon type="md-cart" /><span class="list_count" v-if="$parent.list_count > 0">{{$parent.list_count}}</span>購物車</Button></li>
         </ul>
       </nav>
     </Col>
@@ -70,5 +70,12 @@ ul > li{
 
 .list_count{
   float: left;
+  width: 20px;
+  border-radius: 50%;
+  color: #5AA4F0;
+  position: absolute;
+  margin: -5px 0 0 -35px;
+  font-size: .1rem;
+  font-weight: bold;  
 }
 </style>
