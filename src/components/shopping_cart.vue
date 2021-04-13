@@ -160,12 +160,16 @@ export default {
 
     proceed_delete(){
       let index = this.delete_ask.index
+      let deletePrice = this.one_price[index] * this.theCart[index].amount
       if(this.theCart.length === 1){
         this.$emit('count_list', {mode: 'clear'})
       }else{
-        this.$emit('count_list', {mode: 'minus'})
+        this.$emit('count_list', {mode: 'minus', number: this.theCart[index].amount})
       }
+      this.userForm.total = this.userForm.total - deletePrice
       this.theCart.splice(index, 1) 
+      this.one_price.splice(index, 1)
+      this.old_amount.splice(index, 1)
       this.delete_ask.status = false     
     },
 
