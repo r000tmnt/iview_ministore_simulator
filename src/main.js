@@ -4,6 +4,7 @@ import ViewUI from 'view-design'
 import 'view-design/dist/styles/iview.css'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import 'normalize.css/normalize.css'
 
 Vue.config.productionTip = false
 Vue.prototype.$https = axios

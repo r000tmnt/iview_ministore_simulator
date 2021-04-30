@@ -190,6 +190,7 @@ button{
     border: none;
     border-radius: 50%;
     width: 35px;
+    height: 35px;
     color: white;
     opacity: .5;
     cursor: pointer;

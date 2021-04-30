@@ -7,7 +7,7 @@
     </div>
 
  <div class="theForm center" v-else :class="{message_show: cart_pushed.status === true || delete_ask.status === true}">
-      <h1>您的購物清單</h1>
+      <h1 style="margin-top: 0">您的購物清單</h1>
         <Form id="LoginForm" enctype="multipart/form-data">
           <FormItem>
             <Input class="input" type="text" v-model="userForm.username" placeholder="名稱" />
@@ -34,8 +34,12 @@
               </div>            
             </FormItem>
           </div>
-          總金額: {{userForm.total}} 元
-          <br>
+          <p v-if="userForm.total < 500">運費: 75 元
+            <br>
+            <small style="color: gray">*滿500免運, 還要 {{500 - userForm.total}}</small>
+          </p>
+          <p v-if="userForm.total < 500">總金額: {{userForm.total + 75}} 元</p>
+          <p v-else>總金額: {{userForm.total}} 元</p>
           <p><Button type="text" @click="switch_modal" ghost>繼續購物</Button></p>
           <ButtonGroup>
               <Button type="success" @click="submit_cart">送出</Button>
@@ -83,12 +87,12 @@ export default {
   },
   methods: {
     set_modal(windowHeight){
-      if(windowHeight <= 764 && this.theCart.length >= 2){
+      if(windowHeight < 975 && this.theCart.length >= 2){
         this.cart_modal_style.list_height = 418
         this.cart_modal_style.modal_top = -13
-      }else if(windowHeight <= 764){ this.cart_modal_style.modal_top = -13 }
+      }else if(windowHeight < 975){ this.cart_modal_style.modal_top = -13 }
 
-      if(windowHeight > 764 && this.theCart.length >= 3){
+      if(windowHeight >= 975  && this.theCart.length >= 3){
         this.cart_modal_style.list_height = 639
       }
     },
@@ -198,7 +202,7 @@ export default {
         this.one_price[i] = this.theCart[i].price / this.theCart[i].amount
         this.old_amount[i] = this.theCart[i].amount
       }
-      this.userForm.total = setPrice.reduce( function(a, b){ return a+b}, 0)      
+      this.userForm.total = setPrice.reduce( function(a, b){ return a+b}, 0)
     }
   }
 }
@@ -347,11 +351,7 @@ ul> li{
 
 @media screen and (max-width: 450px){
   .cart_modal{
-    margin-top: -12vh
-  }
-
-  .theForm{
-    margin-top: 8vh;
+    margin-top: -12vh!important;
   }
 
   .input{

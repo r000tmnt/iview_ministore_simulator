@@ -13,9 +13,9 @@
     </div>
 
     <button class="goToshop" @click="openShop"><Icon type="md-pizza" />購物去</button>
-
+    
     <transition-group :name="fade? 'fadeIn' : 'fadeOut'">
-      <the-shop v-if="shop_open === true" :listCount="list_count" :pushID="pushed_id" :deleteID = delete_id @getCart="getTheCart($event)" @close_shop="closeTheShop($event)" @modal_switch="switch_modal($event)" key="shop"></the-shop>      
+      <the-shop v-if="shop_open === true" :listCount="list_count" :pushID="pushed_id" :deleteID = delete_id @getCart="getTheCart($event)" @close_shop="closeTheShop($event)" key="shop"></the-shop>      
     </transition-group>
 
     <footer>
@@ -58,6 +58,9 @@ export default {
     openShop(){
       this.shop_open = true
       this.fade = true
+
+      let body = document.body
+      body.style['overflow'] = 'hidden'
     },
 
     getTheCart(data){

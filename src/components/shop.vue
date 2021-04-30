@@ -1,17 +1,19 @@
 <template>
   <Row> 
-      <div class="modal center">
-        <div class="btn_box">
-          <Button type="warning" class="btn close" @click="shopClose"></Button> 
-          <span class="list_count" v-if="listCount > 0">{{listCount}}</span>                     
-          <Button type="primary" icon="md-cart" class="btn toShop" @click="switch_modal"></Button>        
-        </div>
+      <div class="modal center" :style="{height: windowHeight + 'px'}">
+        <Button type="warning" class="btn close" @click="shopClose"></Button> 
+        <div class="clear"></div>     
         <main class="shelf flex">
           <Col :lg="7" :md="11" :sm="20" v-for="(product, index) in products" :key="product.id">
             <Card class="card">
               <h1>{{product.name}}</h1>
               <div class="product">
-                <img :src="product.path" alt="cake">
+                <img :src="product.path" alt="cake" @mouseover="showInfo(index)" @mouseleave="hideInfo(index)">
+                <div class="product_info" @load="set_height(index)" ref="ifLineBreak" :style="{opacity: product.transparent, marginTop: product.marginTop + 'vh'}">
+                  材料: {{product.recipe}}
+                  <br>
+                  熱量: {{product.calories}} 大卡
+                </div>
               </div>
               <p>${{product.price}}</p>
               <ul>
@@ -21,8 +23,8 @@
               <div class="cart-note" v-if="product.push === true">
                 已加入
               </div> 
-          </Card>
-        </Col>
+            </Card>
+          </Col>
         </main>      
       </div>
   </Row>
@@ -40,6 +42,7 @@ export default {
       return{
           products: [],
           temp_cart: [],
+          windowHeight: Number,
       }
   },
   watch: {
@@ -60,31 +63,52 @@ export default {
 
   },
   methods: {
-    shopClose(){
-      this.$emit('close_shop', false)
+    set_height(info_height, index){
+      if(info_height > 60){
+        this.products[index].marginTop = -7.7
+      }else{
+        this.products[index].marginTop = -5.5
+      }
     },
 
-    switch_modal(){
-      this.$emit('modal_switch', {shop_open: true, cart_open: true})
+    shopClose(){
+      this.$emit('close_shop', false)
+
+      let body = document.body
+      body.style['overflow'] = 'unset'
     },
 
     addToCart(index){
       this.temp_cart.push({ID: this.products[index].ID, name: this.products[index].name, amount: 1, price: JSON.parse(this.products[index].price), pic: this.products[index].path})
 
-      if(Object.keys(this.temp_cart).length > 0){
-        this.$emit('getCart', this.temp_cart)
-        this.temp_cart = []
-        this.products[index].push = true
-      }
-    }
+      this.$nextTick(() => {
+        if(Object.keys(this.temp_cart).length > 0){
+          this.$emit('getCart', this.temp_cart)
+          this.temp_cart = []
+          this.products[index].push = true
+        }        
+      })
+    },
+
+    showInfo(index){
+      this.products[index].transparent = 1
+    },
+
+    hideInfo(index){
+      this.products[index].transparent = 0
+    }    
   },
   created(){
       let vm = this
       vm.$https.get('http://localhost/iview_ministore_simulation/src/php/get_images.php').then(response => {
           for(let i=0; i < response.data.length; i++){
               vm.products.push(response.data[i])
-              vm.products[i].push = false
+              vm.$set(vm.products[i], 'push', false)
+              vm.$set(vm.products[i], 'transparent', 0)
+              vm.$set(vm.products[i], 'marginTop', -5.5)
           }
+
+          vm.windowHeight = window.innerHeight - 97
 
           if(this.pushID.length > 0){
             for(let i=0; i < vm.pushID.length; i++){
@@ -97,18 +121,29 @@ export default {
             }            
           }  
       })
+  },
+  beforeUpdate(){
+    let info = this.$refs.ifLineBreak
+
+    for(let i=0; i < info.length; i++){
+      this.set_height(info[i].offsetHeight, i)
+    }    
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.clear{
+  clear: both;
+}
+
 .modal{
   width: 100vw;
-  height: 100vh;
   background-color: white;
   overflow-x: auto;
-  background-image: url('../assets/Grass-Texture.jpg');
+  background-image: linear-gradient(#fff, hsla(36, 100%, 78%, 0.7)), url('../assets/blanket.jpg');
+  margin-top: 48px;
 }
 
 .center{
@@ -126,16 +161,6 @@ export default {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-}
-
-.btn_box{
-  position: sticky;
-  top: 0;
-  display: flex;
-  flex-direction: row-reverse;
-  width: 98vw;
-  z-index: 2;
-  padding: .5% .5% 0 0;
 }
 
 .list_count{
@@ -160,6 +185,8 @@ export default {
 }
 
 .close{
+  float: right;
+  margin: 1vw;
   width: 22px;
 }
 
@@ -193,6 +220,14 @@ p{
   max-height: 100%;
 }
 
+.product_info{
+  color: white;
+  position: relative;
+  background: rgba(34, 51, 34, 0.5);
+  padding: 1%;
+  transition: all .1s ease;
+}
+
 nav{
   transform: translateY(1vh);
   padding: 1%
@@ -215,19 +250,25 @@ ul > li{
 }
 
 @media screen and (max-width: 991px){
-  .btn_box{
-    width: 97vw;
-    margin-top: 7px;
-  }
   .product{
     width: unset;
     height: unset;
   }
 }
 
+@media screen and (max-width: 767px){
+  .product_info{
+    margin-top: -6vh!important;
+  }
+}
+
 @media screen and (max-width: 576px){
-  .btn_box{
-    margin-top: 8vh;
+  .close{
+    margin: 1.5vw 3.5vw 0 0;
+  }
+
+  .product_info{
+    margin-top: -6.5vh!important;
   }
 
   .shelf{
