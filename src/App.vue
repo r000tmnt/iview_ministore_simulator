@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <head-bar></head-bar>
+    <head-bar :open="shop_open"></head-bar>
 
     <transition-group :name="fade? 'fadeIn' : 'fadeOut'">
       <shopping-cart v-if="cart_open === true" :prepareCart="sorted_cart" @cart_close="closeTheCart($event)" @modal_switch="switch_modal($event)" @cart_clear="clearTheCart($event)" @count_list="listCount($event)" key="cart"></shopping-cart>
@@ -170,7 +170,7 @@ body{
 }
 
 #message{
-  margin-top: 10vh;
+  margin-top: 5vh;
   display: flex;
   justify-content: center;
 }
@@ -182,6 +182,7 @@ body{
   border: none;
   border-radius: 10px;
   background-color: orange;
+  cursor: pointer;
 }
 
 .goToshop:hover{
@@ -195,5 +196,9 @@ li > a{
 
 li > a:hover{
   color: #328DED;
+}
+
+footer{
+  margin-top: 3vh!important;
 }
 </style>

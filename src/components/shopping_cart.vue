@@ -29,17 +29,18 @@
                   <h2>{{item.name}}</h2>
                 </label>
                 <br>
-                <label>數量:</label> <Button class="plus_minus" :disabled="item.amount === 0" type="primary" shape="circle" icon="md-remove" v-model="item.amount" @click="price_recount(index, JSON.parse(item.amount-1))"></Button><Input class="number" v-model="item.amount" placeholder="價格" :value="item.amount" autosize @on-change="price_recount(index, JSON.parse(item.amount))"/><Button class="plus_minus" type="primary" shape="circle" icon="md-add" v-model="item.amount" @click="price_recount(index, JSON.parse(item.amount+1))"></Button>
+                <label>數量:</label> <Button class="plus_minus" :disabled="item.amount === 1" type="primary" shape="circle" icon="md-remove" v-model="item.amount" @click="price_recount(index, JSON.parse(item.amount-1))"></Button><Input class="number" v-model="item.amount" placeholder="價格" :value="item.amount" autosize @on-change="price_recount(index, JSON.parse(item.amount))"/><Button class="plus_minus" type="primary" shape="circle" icon="md-add" v-model="item.amount" @click="price_recount(index, JSON.parse(item.amount+1))"></Button>
                 <label class="price">{{item.price}} 元</label>              
               </div>            
             </FormItem>
           </div>
-          <p v-if="userForm.total < 500">運費: 75 元
+          <div class="total_info">
+            <p v-if="userForm.total < 500" style="margin: 0 1%">運費: 75 元 </p>
+            <p v-if="userForm.total < 500" style="margin: 0 1%">總金額: {{userForm.total + 75}} 元</p>
+            <p v-else>總金額: {{userForm.total}} 元</p>
             <br>
-            <small style="color: gray">*滿500免運, 還要 {{500 - userForm.total}}</small>
-          </p>
-          <p v-if="userForm.total < 500">總金額: {{userForm.total + 75}} 元</p>
-          <p v-else>總金額: {{userForm.total}} 元</p>
+            <small v-if="userForm.total < 500" style="color: gray">*滿500免運, 還要 {{500 - userForm.total}}</small>
+          </div>
           <p><Button type="text" @click="switch_modal" ghost>繼續購物</Button></p>
           <ButtonGroup>
               <Button type="success" @click="submit_cart">送出</Button>
@@ -87,14 +88,14 @@ export default {
   },
   methods: {
     set_modal(windowHeight){
-      if(windowHeight < 975 && this.theCart.length >= 2){
-        this.cart_modal_style.list_height = 418
-        this.cart_modal_style.modal_top = -13
-      }else if(windowHeight < 975){ this.cart_modal_style.modal_top = -13 }
+      // if(windowHeight < 975 && this.theCart.length >= 2){
+      //   this.cart_modal_style.list_height = 418
+      // }else 
+      if(windowHeight < 975){ this.cart_modal_style.modal_top = -13 }
 
-      if(windowHeight >= 975  && this.theCart.length >= 3){
-        this.cart_modal_style.list_height = 639
-      }
+      // if(windowHeight >= 975  && this.theCart.length >= 3){
+      //   this.cart_modal_style.list_height = 639
+      // }
     },
 
     close(){
@@ -103,13 +104,11 @@ export default {
 
     price_recount(index, amount){
       if(amount <= 0){
-        amount = 0
-        this.theCart[index].price = 0
-        this.theCart[index].amount = 0
-      }else{
-        this.theCart[index].price = this.one_price[index] * amount
-        this.theCart[index].amount = amount
+        amount = 1
+        this.theCart[index].amount = 1
       }
+      this.theCart[index].price = this.one_price[index] * amount
+      this.theCart[index].amount = amount
 
       if(this.old_amount[index] < amount){
         let increase = amount - this.old_amount[index]
@@ -225,7 +224,7 @@ export default {
   height: 100vh;
   background: rgba(51, 42, 34, 0.7);
   position: absolute;
-  margin-top: -10vh;
+  margin-top: -13vh;
   z-index: 3;
 }
 
@@ -258,6 +257,7 @@ P > button:hover{
 
 .list_container{
   overflow-y: scroll;
+  height: 418px;
 }
 
 .list_item{
@@ -326,6 +326,14 @@ ul> li{
   list-style: none;
 }
 
+.total_info{
+  margin-top: 1vh;
+}
+
+.total_info > p{
+  display: inline-block;
+}
+
 @media screen and (max-width: 500px){
   .theForm{
     width: 100vw;
@@ -351,7 +359,7 @@ ul> li{
 
 @media screen and (max-width: 450px){
   .cart_modal{
-    margin-top: -12vh!important;
+    margin-top: -15vh!important;
   }
 
   .input{

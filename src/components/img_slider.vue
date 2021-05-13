@@ -10,8 +10,8 @@
         
         <nav class="direction">
             <ul class="arrows">
-                <li><button @click="prevIMG(img_index)"><Icon class="left" type="md-arrow-dropleft" /></button></li>
-                <li><button @click="nextIMG(img_index)"><Icon class="right" type="md-arrow-dropright" /></button></li>
+                <li><button @click="prevIMG(img_index, true)"><Icon class="left" type="md-arrow-dropleft" /></button></li>
+                <li><button @click="nextIMG(img_index, true)"><Icon class="right" type="md-arrow-dropright" /></button></li>
             </ul>
         </nav>
 
@@ -30,6 +30,8 @@ export default {
   name: 'img_slider',
   data() {
       return{
+          timer: '',
+          clicked: false,
           img_sources: [],
           img_index: 0,
           currentIMG: '',
@@ -39,40 +41,57 @@ export default {
   },
   methods: {
       img_slider(){
-          window.setInterval(()=>{
+          this.timer = window.setInterval(()=>{
               if(this.slideBack === false){
-                  this.nextIMG(this.img_index)
+                  this.nextIMG(this.img_index, this.clicked)
               }else{
-                  this.prevIMG(this.img_index)
+                  this.prevIMG(this.img_index, this.clicked)
               }
           }, 5000)
       },
 
-      nextIMG(index){
+      nextIMG(index, clicked){
           this.slideBack = false
+          console.log(clicked)
+          if(clicked === true){
+              this.pause_timer()
+          }  
+
           if(index === this.img_total-1){
               this.img_index = 0
               return this.currentIMG = this.img_sources[0]
           }else if(this.img_sources[index+1] !== undefined){
               this.img_index = index+1
               return this.currentIMG = this.img_sources[this.img_index]
-          }
+          }        
       },
 
-      prevIMG(index){
+      prevIMG(index, clicked){
           this.slideBack = true
+          console.log(clicked)
+          if(clicked === true){
+              this.pause_timer()
+          }            
+          
           if(index === 0){
               this.img_index = this.img_total-1
               return this.currentIMG = this.img_sources[this.img_total-1]
           }else if(this.img_sources[index-1] !== undefined){
               this.img_index = index-1
               return this.currentIMG = this.img_sources[this.img_index]
-          }          
+          }        
+      },
+
+      pause_timer(){
+          console.log('pause')
+          window.clearInterval(this.timer)
+          this.img_slider()
       },
 
       toIndex(index){
           this.currentIMG = this.img_sources[index]
           this.img_index = index
+          this.pause_timer()
       }
   },
   created(){
@@ -94,9 +113,11 @@ export default {
 <style scoped>
 .slide-enter-active, .slide-leave-active {
     transition: all 1.5s ease-in-out;
+    opacity: 1;
 }
 .slide-enter{
     transform: translate(100%, 0);
+    opacity: 0;
 }
 
 .slide-leave-to{
@@ -108,10 +129,12 @@ export default {
 }
 .slideBack-enter{
     transform: translate(-100%, 0);
+    opacity: 0;
 }
 
 .slideBack-leave-to{
     transform: translate(100%,0);
+    opacity: 1;
 }
 
 .slider{
@@ -119,7 +142,7 @@ export default {
 }
 
 .img_slide > img{
-    width: 100vw;
+    width: 70vw;
     height: 50vh;
     object-fit: cover;
     position: absolute;
@@ -127,6 +150,8 @@ export default {
     left: 0;
     bottom: 0;
     right: 0;
+    margin: 0 auto;
+    transition: all 0s ease;
 }
 
 .here{
@@ -146,7 +171,7 @@ nav{
 }
 
 .arrows{
-  width: 100vw;
+  width: 65vw;
   display: flex;
   justify-content: space-between;
   font-size: 1.5rem;
@@ -171,7 +196,7 @@ nav{
 }
 
 .dot{
-    border: 1px solid #232;
+    border: 1px solid rgba(34, 51, 34, 0.7);
     width: 15px;
     height: 15px;
     border-radius: 50%;
@@ -181,8 +206,7 @@ nav{
 }
 
 .dot:hover{
-    width: 18px;
-    height: 18px;
+    border: 1px solid #232;
 }
 
 button{
@@ -209,7 +233,22 @@ button:hover{
     margin-left: 2px;
 }
 
+@media screen and (max-width: 850px){
+    .arrows ,.img_slide > img{
+        width: 90vw;
+    }
+}
+
+
 @media screen and (max-width: 500px){
+    .arrows ,.img_slide > img{
+        width: 100vw;
+    }
+
+    .circles{
+        margin-top: 27vh;
+    }
+
     .dot{
         margin: 0 1%;
     }

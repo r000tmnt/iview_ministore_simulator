@@ -1,5 +1,5 @@
 <template>
-  <Row> 
+  <Row class="headBar" :class="{shop_open: open}"> 
     <Col :xs="12">
       <div>
         <a class="logo" href="#">
@@ -22,6 +22,9 @@
 
 export default {
   name: 'head_bar',
+  props: {
+    open: Boolean
+  },
   methods: {
     openCart(){
       this.$parent.cart_open = true
@@ -33,6 +36,17 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.headBar{
+  background: white;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 3vh;
+}
+
+.shop_open{
+  box-shadow: 0px 5px 5px rgba(34, 51, 34, 0.5);
+}
+
 .logo{
   float: left;
   width: 150px;
