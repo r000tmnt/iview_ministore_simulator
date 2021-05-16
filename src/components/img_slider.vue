@@ -28,6 +28,9 @@
 <script>
 export default {
   name: 'img_slider',
+  props: {
+      productImgs: Array
+  },
   data() {
       return{
           timer: '',
@@ -39,6 +42,18 @@ export default {
           slideBack: false
       } 
   },
+
+  watch: {
+      productImgs: function(value){
+          this.img_total = value.length
+          this.currentIMG = value[0]
+          for(let i=0; i < this.img_total; i++){
+              this.img_sources.push(value[i])
+          }
+          this.img_slider()                    
+      }
+  },
+
   methods: {
       img_slider(){
           this.timer = window.setInterval(()=>{
@@ -52,7 +67,6 @@ export default {
 
       nextIMG(index, clicked){
           this.slideBack = false
-          console.log(clicked)
           if(clicked === true){
               this.pause_timer()
           }  
@@ -68,7 +82,6 @@ export default {
 
       prevIMG(index, clicked){
           this.slideBack = true
-          console.log(clicked)
           if(clicked === true){
               this.pause_timer()
           }            
@@ -83,7 +96,6 @@ export default {
       },
 
       pause_timer(){
-          console.log('pause')
           window.clearInterval(this.timer)
           this.img_slider()
       },
@@ -93,18 +105,6 @@ export default {
           this.img_index = index
           this.pause_timer()
       }
-  },
-  created(){
-      let vm = this
-      vm.$https.get('http://localhost/iview_ministore_simulation/src/php/get_images.php').then(response => {
-          vm.img_total = response.data.length
-          vm.currentIMG = response.data[0].path
-          for(let i=0; i < response.data.length; i++){
-              vm.img_sources .push(response.data[i].path)
-          }
-      })
-
-      this.img_slider();
   }
 }
 </script>

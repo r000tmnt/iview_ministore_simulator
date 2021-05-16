@@ -5,6 +5,7 @@
         <a class="logo" href="#">
           <img src="../assets/Biken_LOGO_2021.png" alt="LOGO">
         </a>
+        <div class="clear"></div>
       </div>
     </Col>
     <Col :xs="12">
@@ -36,6 +37,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.clear{
+  clear: both;
+}
+
 .headBar{
   background: white;
   position: relative;
@@ -50,6 +55,7 @@ export default {
 .logo{
   float: left;
   width: 150px;
+  margin-left: 14.3vw;
 }
 
 .logo > img{
@@ -58,7 +64,8 @@ export default {
 
 nav{
   transform: translateY(1vh);
-  padding: 1%
+  padding: 1%;
+  margin-right: 14.3vw
 }
 
 ul{
@@ -89,7 +96,16 @@ ul > li{
   color: #5AA4F0;
   position: absolute;
   margin: -5px 0 0 -35px;
-  font-size: .1rem;
-  font-weight: bold;  
+  font-size: 1rem;
+}
+
+@media screen and (max-width: 767px){
+  .logo{
+    margin-left: unset;
+  }
+
+  nav{
+    margin-right: unset;
+  }
 }
 </style>

@@ -6,16 +6,16 @@
       <shopping-cart v-if="cart_open === true" :prepareCart="sorted_cart" @cart_close="closeTheCart($event)" @modal_switch="switch_modal($event)" @cart_clear="clearTheCart($event)" @count_list="listCount($event)" key="cart"></shopping-cart>
     </transition-group>
     
-    <img_slider></img_Slider>
+    <img-slider :productImgs="product_imgs"></img-Slider>
     <div id="message">
       <h1>適度的休息，<br>
         是開起精神的好夥伴</h1>
     </div>
 
-    <button class="goToshop" @click="openShop"><Icon type="md-pizza" />購物去</button>
+    <button class="goToshop" @click="openShop">挑麵包</button>
     
     <transition-group :name="fade? 'fadeIn' : 'fadeOut'">
-      <the-shop v-if="shop_open === true" :listCount="list_count" :pushID="pushed_id" :deleteID = delete_id @getCart="getTheCart($event)" @close_shop="closeTheShop($event)" key="shop"></the-shop>      
+      <the-shop v-if="shop_open === true" :Fullproduct="full_product" :listCount="list_count" :pushID="pushed_id" :deleteID = delete_id @getCart="getTheCart($event)" @close_shop="closeTheShop($event)" key="shop"></the-shop>      
     </transition-group>
 
     <footer>
@@ -32,17 +32,19 @@
 
 <script>
 import headBar from './components/head_bar.vue'
-import img_slider from './components/img_slider.vue'
+import imgSlider from './components/img_slider.vue'
 import theShop from './components/shop.vue'
 import shoppingCart from './components/shopping_cart.vue'
 
 export default {
   name: 'App',
   components: {
-    headBar,img_slider, theShop, shoppingCart
+    headBar,imgSlider, theShop, shoppingCart
   },
   data(){
     return{
+      product_imgs: [],
+      full_product: [],
       shop_open: false,
       cart_open: false,
       logIn_status: false,
@@ -55,6 +57,16 @@ export default {
     }
   },
   methods: {
+    getImgs(){
+      let vm = this
+      vm.$https.get('http://localhost/iview_ministore_simulation/src/php/get_images.php').then(response => {
+          for(let i=0; i < response.data.length; i++){
+              vm.product_imgs.push(response.data[i].path)
+              vm.full_product.push(response.data[i])
+          }
+      })      
+    },
+
     openShop(){
       this.shop_open = true
       this.fade = true
@@ -120,12 +132,10 @@ export default {
       this.cart_open = signals.cart_open
       this.shop_open = signals.shop_open
     }
-  },  
-  created(){ //Check login or not
-    if(this.logIn_status === false){
-      this.form_active = true
-    }
-  }
+  },
+  created(){
+    this.getImgs()
+  }  
 }
 </script>
 
@@ -187,7 +197,8 @@ body{
 
 .goToshop:hover{
   border-bottom: 3px solid rgb(92, 51, 3);
-  transition: border .1s ease;
+  margin-bottom: -3px;
+  transition: all .1s ease;
 }
 
 li > a{

@@ -1,7 +1,9 @@
 <template>
   <Row> 
       <div class="modal center" :style="{height: windowHeight + 'px'}">
-        <Button type="warning" class="btn close" @click="shopClose"></Button> 
+        <Button type="warning" class="btn return" @click="shopClose">
+          <Icon type="md-return-left" />
+        </Button> 
         <div class="clear"></div>     
         <main class="shelf flex">
           <Col :lg="7" :md="11" :sm="20" v-for="(product, index) in products" :key="product.id">
@@ -34,6 +36,7 @@
 export default {
   name: 'theShop',
   props: {
+    Fullproduct: Array,
     listCount: Number,
     pushID: Array,
     deleteID: Object
@@ -100,27 +103,25 @@ export default {
   },
   created(){
       let vm = this
-      vm.$https.get('http://localhost/iview_ministore_simulation/src/php/get_images.php').then(response => {
-          for(let i=0; i < response.data.length; i++){
-              vm.products.push(response.data[i])
-              vm.$set(vm.products[i], 'push', false)
-              vm.$set(vm.products[i], 'transparent', 0)
-              vm.$set(vm.products[i], 'marginTop', -5.5)
-          }
+      for(let i=0; i < vm.Fullproduct.length; i++){
+          vm.products.push(vm.Fullproduct[i])
+          vm.$set(vm.products[i], 'push', false)
+          vm.$set(vm.products[i], 'transparent', 0)
+          vm.$set(vm.products[i], 'marginTop', -5.5)
+      }
 
-          vm.windowHeight = window.innerHeight - 97
+      vm.windowHeight = window.innerHeight - 97
 
-          if(this.pushID.length > 0){
-            for(let i=0; i < vm.pushID.length; i++){
-              let thepushedID = vm.pushID[i]
-                for(let j=0; j < vm.products.length; j++){
-                  if(vm.products[j].ID === thepushedID){
-                    vm.products[j].push = true
-                  }
-                }              
-            }            
-          }  
-      })
+      if(vm.pushID.length > 0){
+        for(let i=0; i < vm.pushID.length; i++){
+          let thepushedID = vm.pushID[i]
+            for(let j=0; j < vm.products.length; j++){
+              if(vm.products[j].ID === thepushedID){
+                vm.products[j].push = true
+              }
+            }              
+        }            
+      }  
   },
   beforeUpdate(){
     let info = this.$refs.ifLineBreak
@@ -154,7 +155,8 @@ export default {
 }
 
 .shelf{
-  padding: 5vh 0;
+  width: 80vw;
+  margin: 0 auto;
 }
 
 .flex{
@@ -174,25 +176,13 @@ export default {
   font-size: .1rem;
   font-weight: bold;
 }
-
-.btn{
-  border-radius: 50%;
-  margin: 0.5% 0 0 0;
-}
-
 .toShop{
   margin-right: 10px;
 }
 
-.close{
+.return{
   float: right;
-  margin: 1vw;
-  width: 22px;
-}
-
-.close::after{
-  content: 'X';
-  margin-left: -5px;
+  margin: 1vw 15vw 0;
 }
 
 .card{
@@ -210,14 +200,10 @@ p{
   color: goldenrod
 }
 
-.product{
-  width: 25vw;
-  height: 40vh;
-}
-
 .product > img{
-  max-width: 100%;
-  max-height: 100%;
+  width: 20vw;
+  height: 20vw;
+  object-fit: cover;
 }
 
 .product_info{
@@ -250,33 +236,59 @@ ul > li{
 }
 
 @media screen and (max-width: 991px){
-  .product{
-    width: unset;
-    height: unset;
+  .return{
+    margin: 2vw 13.3vw 0 0;
+  }
+
+  .product > img{
+    width: 30vw;
+    height: 30vw;
   }
 }
 
 @media screen and (max-width: 767px){
+  .product > img{
+    width: 50vw;
+    height: 50vw;
+  }
+
   .product_info{
-    margin-top: -6vh!important;
+    margin-top: -5.8vh!important;
   }
 }
 
 @media screen and (max-width: 576px){
-  .close{
-    margin: 1.5vw 3.5vw 0 0;
+  .product{
+    width: 60vw;
   }
+
+  .product > img{
+    width: 60vw;
+    height: 60vw;
+  }  
 
   .product_info{
     margin-top: -6.5vh!important;
   }
 
-  .shelf{
-    padding-top: unset;
-  }
-
   .card{
     margin: 2% 0;
+  }
+}
+
+@media screen and (max-width: 375px){
+  .shelf{
+    width: 100vw;
+    margin: unset;
+  }
+
+  .product{
+    width: 250px;
+  }
+
+  .product > img{
+    width: 60vw;
+    height: 60vw;
   }
 }
 </style>

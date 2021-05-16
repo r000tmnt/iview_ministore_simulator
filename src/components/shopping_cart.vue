@@ -9,13 +9,15 @@
  <div class="theForm center" v-else :class="{message_show: cart_pushed.status === true || delete_ask.status === true}">
       <h1 style="margin-top: 0">您的購物清單</h1>
         <Form id="LoginForm" enctype="multipart/form-data">
-          <FormItem>
-            <Input class="input" type="text" v-model="userForm.username" placeholder="名稱" />
+        <div class="inputs">
+          <FormItem label="姓名">
+            <Input class="input" type="text" v-model="userForm.username" placeholder="您的大名" />
           </FormItem>
 
-          <FormItem>
-            <Input class="input" type="tel" v-model="userForm.phone" placeholder="電話" />
-          </FormItem>
+          <FormItem label="電話">
+            <Input class="input" type="tel" v-model="userForm.phone" placeholder="09********" />
+          </FormItem>          
+        </div>
 
           <div class="list_container" :style="{'height': cart_modal_style.list_height + 'px'}">
             <FormItem class="list_item" v-for="(item, index) in theCart" :key="item.ID">
@@ -88,14 +90,7 @@ export default {
   },
   methods: {
     set_modal(windowHeight){
-      // if(windowHeight < 975 && this.theCart.length >= 2){
-      //   this.cart_modal_style.list_height = 418
-      // }else 
       if(windowHeight < 975){ this.cart_modal_style.modal_top = -13 }
-
-      // if(windowHeight >= 975  && this.theCart.length >= 3){
-      //   this.cart_modal_style.list_height = 639
-      // }
     },
 
     close(){
@@ -294,13 +289,17 @@ P > button:hover{
   margin-top: -19px;
 }
 
+.inputs{
+  display: flex;
+  justify-content: space-evenly;
+}
+
 label{
-  margin: 0 1vw;
-  vertical-align: middle;
+  padding: 1% 0!important;
 }
 
 .input{
-  width: 419px!important;
+  margin: 0 1%;
 }
 
 .plus_minus{
