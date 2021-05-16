@@ -362,7 +362,7 @@ ul> li{
   }
 
   .input{
-    width: 90vw!important;
+    width: 46vw!important;
   }
 }
 </style>
