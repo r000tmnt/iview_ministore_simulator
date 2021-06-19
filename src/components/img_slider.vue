@@ -10,14 +10,14 @@
         
         <nav class="direction">
             <ul class="arrows">
-                <li><button @click="prevIMG(img_index, true)"><Icon class="left" type="md-arrow-dropleft" /></button></li>
-                <li><button @click="nextIMG(img_index, true)"><Icon class="right" type="md-arrow-dropright" /></button></li>
+                <li><button @click="switchIMG(img_index, true, switch_mode.pre)" :class="{disable: clicked === true}"><Icon class="left" type="md-arrow-dropleft" /></button></li>
+                <li><button @click="switchIMG(img_index, true, switch_mode.next)" :class="{disable: clicked === true}"><Icon class="right" type="md-arrow-dropright" /></button></li>
             </ul>
         </nav>
 
         <nav class="circles">
             <ul class="dots">
-                <li class="dot" v-for="(img, index) in img_sources" :key="index" :class="{here: index === img_index}" @click="toIndex(index)"></li>
+                <li class="dot" v-for="(img, index) in img_sources" :key="index" :class="{here: index === img_index, disable: clicked === true}" @click="toIndex(index)"></li>
             </ul>            
         </nav>
       </main>
@@ -35,6 +35,7 @@ export default {
       return{
           timer: '',
           clicked: false,
+          switch_mode: { pre: 'previous', next: 'next'},
           img_sources: [],
           img_index: 0,
           currentIMG: '',
@@ -56,43 +57,48 @@ export default {
 
   methods: {
       img_slider(){
+          if(this.clicked === true){
+              window.setTimeout(()=>{
+                  this.clicked = false
+              }, 1500)
+          }
+
           this.timer = window.setInterval(()=>{
               if(this.slideBack === false){
-                  this.nextIMG(this.img_index, this.clicked)
+                  this.switchIMG(this.img_index, this.clicked, this.switch_mode.next)
               }else{
-                  this.prevIMG(this.img_index, this.clicked)
+                  this.switchIMG(this.img_index, this.clicked, this.switch_mode.pre)
               }
           }, 5000)
       },
 
-      nextIMG(index, clicked){
-          this.slideBack = false
+      switchIMG(index, clicked, mode){
           if(clicked === true){
+              this.clicked = clicked
               this.pause_timer()
-          }  
+          }
 
-          if(index === this.img_total-1){
-              this.img_index = 0
-              return this.currentIMG = this.img_sources[0]
-          }else if(this.img_sources[index+1] !== undefined){
-              this.img_index = index+1
-              return this.currentIMG = this.img_sources[this.img_index]
-          }        
-      },
+          if(mode === 'previous'){
+              this.slideBack = true
 
-      prevIMG(index, clicked){
-          this.slideBack = true
-          if(clicked === true){
-              this.pause_timer()
-          }            
-          
-          if(index === 0){
-              this.img_index = this.img_total-1
-              return this.currentIMG = this.img_sources[this.img_total-1]
-          }else if(this.img_sources[index-1] !== undefined){
-              this.img_index = index-1
-              return this.currentIMG = this.img_sources[this.img_index]
-          }        
+              if(index === 0){
+                this.img_index = this.img_total-1
+                return this.currentIMG = this.img_sources[this.img_total-1]
+              }else{
+                this.img_index = index-1
+                return this.currentIMG = this.img_sources[this.img_index]
+              }               
+          }else{
+              this.slideBack = false
+
+              if(index === this.img_total-1){
+                  this.img_index = 0
+                  return this.currentIMG = this.img_sources[0]
+              }else{
+                  this.img_index = index+1
+                  return this.currentIMG = this.img_sources[this.img_index]
+              }               
+          }
       },
 
       pause_timer(){
@@ -101,6 +107,7 @@ export default {
       },
 
       toIndex(index){
+          this.clicked = true
           this.currentIMG = this.img_sources[index]
           this.img_index = index
           this.pause_timer()
@@ -180,6 +187,10 @@ nav{
 .arrows > li{
   list-style: none;
   margin: 0 1%;
+}
+
+.disable{
+    pointer-events: none;
 }
 
 .circles{

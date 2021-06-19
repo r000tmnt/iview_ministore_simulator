@@ -1,9 +1,9 @@
 <template>
   <div id="app">
-    <head-bar :open="shop_open"></head-bar>
+    <head-bar :open="shop_open" @close_all="closeModal($event)"></head-bar>
 
     <transition-group :name="fade? 'fadeIn' : 'fadeOut'">
-      <shopping-cart v-if="cart_open === true" :prepareCart="sorted_cart" @cart_close="closeTheCart($event)" @modal_switch="switch_modal($event)" @cart_clear="clearTheCart($event)" @count_list="listCount($event)" key="cart"></shopping-cart>
+      <shopping-cart v-if="cart_open === true" :prepareCart="sorted_cart" @cart_close="closeModal($event)" @modal_switch="switch_modal($event)" @cart_clear="clearTheCart($event)" @count_list="listCount($event)" key="cart"></shopping-cart>
     </transition-group>
     
     <img-slider :productImgs="product_imgs"></img-Slider>
@@ -15,7 +15,7 @@
     <button class="goToshop" @click="openShop">挑麵包</button>
     
     <transition-group :name="fade? 'fadeIn' : 'fadeOut'">
-      <the-shop v-if="shop_open === true" :Fullproduct="full_product" :listCount="list_count" :pushID="pushed_id" :deleteID = delete_id @getCart="getTheCart($event)" @close_shop="closeTheShop($event)" key="shop"></the-shop>      
+      <the-shop v-if="shop_open === true" :Fullproduct="full_product" :listCount="list_count" :pushID="pushed_id" :deleteID = delete_id @getCart="getTheCart($event)" @close_shop="closeModal($event)" key="shop"></the-shop>      
     </transition-group>
 
     <footer>
@@ -114,14 +114,10 @@ export default {
       }
     },
 
-    closeTheShop(signal){
+    closeModal(signal){
       this.fade = false
-      this.shop_open = signal
-    },
-    
-    closeTheCart(signal){
-      this.fade = false
-      this.cart_open = signal
+      if(signal.location === 'shop') { this.shop_open = signal.open }
+      if(signal.location === 'cart') { this.cart_open = signal.open }
     },
 
     clearTheCart(signal){

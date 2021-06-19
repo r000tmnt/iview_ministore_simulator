@@ -44,10 +44,8 @@
             <small v-if="userForm.total < 500" style="color: gray">*滿500免運, 還要 {{500 - userForm.total}}</small>
           </div>
           <p><Button type="text" @click="switch_modal" ghost>繼續購物</Button></p>
-          <ButtonGroup>
-              <Button type="success" @click="submit_cart">送出</Button>
-              <Button type="warning" @click="close">取消</Button>
-          </ButtonGroup>
+          <Button class="btn" type="success" @click="submit_cart">送出</Button>
+          <Button class="btn" type="warning" @click="close">取消</Button>
         </Form>
     </div>
 
@@ -61,10 +59,8 @@
     <div class="message_modal" v-if="delete_ask.status === true">
       <div class="theForm center">
         <h1 class="message">確定刪除<span style="color: orange">{{delete_ask.message}}</span>?</h1>
-        <ButtonGroup>
-          <Button type="success" @click="proceed_delete()">確認</Button>
-          <Button type="warning" @click="cancle_delete()">取消</Button>          
-        </ButtonGroup>        
+        <Button class="btn" type="success" @click="proceed_delete()">確認</Button>
+        <Button class="btn" type="warning" @click="cancle_delete()">取消</Button>              
       </div>
     </div>    
   </div>
@@ -94,7 +90,8 @@ export default {
     },
 
     close(){
-      this.$emit('cart_close', false)
+      const signal = {open: false, location: 'cart'}
+      this.$emit('cart_close', signal)
     },
 
     price_recount(index, amount){
@@ -240,6 +237,10 @@ export default {
 
 .message_show{
   opacity: .5;
+}
+
+.btn{
+  margin: 2%;
 }
 
 p > button{

@@ -75,7 +75,8 @@ export default {
     },
 
     shopClose(){
-      this.$emit('close_shop', false)
+      const signal = {open: false, location: 'shop'}
+      this.$emit('close_shop', signal)
 
       let body = document.body
       body.style['overflow'] = 'unset'

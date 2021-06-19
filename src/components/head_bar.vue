@@ -2,7 +2,7 @@
   <Row class="headBar" :class="{shop_open: open}"> 
     <Col :xs="12">
       <div>
-        <a class="logo" href="#">
+        <a class="logo" @click="backToIndex">
           <img src="../assets/Biken_LOGO_2021.png" alt="LOGO">
         </a>
         <div class="clear"></div>
@@ -30,6 +30,11 @@ export default {
     openCart(){
       this.$parent.cart_open = true
       this.$parent.fade = true
+    },
+
+    backToIndex(){
+      const signal = {open: false, location: 'shop'}
+      this.$emit('close_all', signal)
     }
   }
 }
